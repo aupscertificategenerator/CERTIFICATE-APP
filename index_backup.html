@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1e4f91">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>School Kalolsavam - Certificate Registration</title>
+<style>
+*{box-sizing:border-box}body{font-family:Inter,Segoe UI,Arial,sans-serif;background:#eef2f7;margin:0;padding:22px;color:#172033;min-height:100vh}.card{max-width:760px;margin:24px auto;background:#fff;padding:30px;border-radius:20px;box-shadow:0 12px 35px rgba(24,32,51,.10)}
+.cover{position:relative;overflow:hidden;text-align:center;padding:58px 34px;min-height:620px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(145deg,#ffffff 0%,#f8fbff 58%,#edf4ff 100%);border:1px solid #e2e9f3}.cover:before{content:"";position:absolute;width:360px;height:360px;border-radius:50%;background:#dceaff;right:-170px;top:-170px;opacity:.65}.cover:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:#e9ddff;left:-130px;bottom:-130px;opacity:.55}.brand{position:relative;z-index:1;font-size:14px;font-weight:800;letter-spacing:3px;color:#49607d;text-transform:uppercase;margin-bottom:18px}.school-name{position:relative;z-index:1;font-size:28px;font-weight:800;letter-spacing:.3px;margin:0 0 16px;color:#14213d}.cover-line{position:relative;z-index:1;width:72px;height:4px;border-radius:9px;background:#315d9b;margin:0 auto 24px}.cover h1{position:relative;z-index:1;font-size:42px;line-height:1.08;margin:0 0 12px;color:#172b4d;letter-spacing:1px}.cover-sub{position:relative;z-index:1;font-size:18px;font-weight:600;color:#5c6b80;margin:0 0 8px}.cover-tag{position:relative;z-index:1;font-size:14px;color:#7a8798;margin:0 0 30px}.start-wrap{position:relative;z-index:1}.start-btn{width:auto;min-width:220px;padding:14px 34px;border:0;border-radius:10px;background:#1e4f91;color:#fff;font-size:17px;font-weight:700;letter-spacing:.4px;cursor:pointer;box-shadow:0 8px 18px rgba(30,79,145,.22);transition:.2s}.start-btn:hover{transform:translateY(-1px);background:#173f74}.portal-link{display:inline-block;margin-top:14px;color:#1e4f91;text-decoration:none;font-weight:700;font-size:13px}.portal-link:hover{text-decoration:underline}.cover-footer{position:relative;z-index:1;margin-top:30px;font-size:12px;color:#8a96a6;letter-spacing:.5px}.form-title{font-size:26px;margin:0 0 5px}.form-subtitle{margin:0 0 22px;color:#68758a;font-size:14px}button{width:100%;padding:12px;border:0;border-radius:9px;background:#1e4f91;color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:18px}.secondary{background:#6d7785}label{display:block;font-weight:700;margin-top:14px}input,select{width:100%;padding:11px;margin-top:6px;border:1px solid #cfd7e3;border-radius:8px;font-size:15px;background:#fff}.radio-group{display:flex;gap:20px;margin-top:8px}.radio-group label{font-weight:normal;margin:0}.radio-group input{width:auto;margin-right:5px}.hidden{display:none}.msg{margin-top:15px;font-weight:bold}
+</style>
+</head>
+<body>
+
+<div id="cover" class="card cover">
+  <div class="brand">School Kalolsavam Portal</div>
+  <h2 class="school-name"></h2>
+  <div class="cover-line"></div>
+  <h1>CERTIFICATE<br>BULK GENERATOR</h1>
+  <p class="cover-sub">School Kalolsavam Certificate Management</p>
+  <p class="cover-tag">Student Registration • Certificate Generation • Bulk Download</p>
+  <div class="start-wrap"><button id="startBtn" class="start-btn">START REGISTRATION&nbsp; →</button><br><a href="admin.html" class="portal-link">TEACHER / ADMIN PORTAL →</a></div>
+  <div class="cover-footer">Teacher Portal &nbsp;•&nbsp; Secure Student Records &nbsp;•&nbsp; Easy Certificate Management</div>
+</div>
+
+<div id="pageNav" class="card hidden" style="padding:14px 22px"><a href="index.html" style="color:#1e4f91;font-weight:700;text-decoration:none">← Home</a> &nbsp; | &nbsp; <a href="admin.html" style="color:#1e4f91;font-weight:700;text-decoration:none">Teacher / Admin Portal →</a></div>
+
+<div id="formCard" class="card hidden">
+<h2 class="form-title">Student Registration</h2><p class="form-subtitle">Enter student details to add them to the certificate register.</p>
+<form id="f">
+<label>Student Name *</label>
+<input id="name" required>
+
+<label>Category *</label>
+<div class="radio-group">
+  <label><input type="radio" name="category" value="LP"> LP</label>
+  <label><input type="radio" name="category" value="UP"> UP</label>
+</div>
+
+<div id="classWrap" class="hidden">
+<label>Class *</label><select id="class"><option value="">Select Class</option></select>
+</div>
+
+<div id="divisionWrap" class="hidden">
+<label>Division *</label><select id="division"><option value="">Select Division</option></select>
+</div>
+
+<div id="lpCategoryWrap" class="hidden">
+<label>Item Category *</label>
+<select id="lpItemCategory">
+  <option value="">Select Item Category</option>
+  <option value="General">General</option>
+  <option value="Arabic">Arabic</option>
+</select>
+</div>
+
+<div id="upCategoryWrap" class="hidden">
+<label>Item Category *</label>
+<div class="radio-group">
+  <label><input type="radio" name="itemCategory" value="Arabic"> Arabic</label>
+  <label><input type="radio" name="itemCategory" value="Sanskrit"> Sanskrit</label>
+  <label><input type="radio" name="itemCategory" value="General"> General</label>
+</div>
+</div>
+
+<div id="itemWrap" class="hidden">
+<label>Item *</label><select id="item"><option value="">Select Item</option></select>
+</div>
+
+<label>Place *</label>
+<select id="place" required>
+<option value="">Select Place</option>
+<option>First</option>
+<option>Second</option>
+<option>Third</option>
+</select>
+
+<label>Student Photo *</label>
+<input id="photo" type="file" accept="image/*" required>
+
+<button>Submit Registration</button>
+<button type="button" class="secondary" id="backBtn">Back</button>
+</form>
+<div id="msg" class="msg"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+const sb=supabase.createClient(SUPABASE_CONFIG.url,SUPABASE_CONFIG.publishableKey);
+const LP_ITEMS={
+General:["പെൻസിൽ ഡ്രോയിങ്","ജലച്ചായം","കടങ്കഥ","പ്രസംഗം മലയാളം","തമിഴ് പ്രസംഗം","കന്നഡ പ്രസംഗം",
+"മോണോആക്ട്","കഥാകഥനം","അറബിക് പദ്യം ചൊല്ലൽ (ജനറൽ)","ഇംഗ്ലീഷ് പദ്യം","ലളിതഗാനം",
+"പദ്യം ചൊല്ലൽ കന്നട","പദ്യം ചൊല്ലൽ മലയാളം","ആംഗ്യപ്പാട്ട് ഇംഗ്ലീഷ്","ആംഗ്യപ്പാട്ട് മലയാളം",
+"പദ്യം ചൊല്ലൽ തമിഴ്","നാടോടി നൃത്തം","മാപ്പിളപ്പാട്ട്","സംഘഗാനം","ദേശഭക്തിഗാനം","സംഘനൃത്തം"],
+Arabic:["പദ്യം ചൊല്ലൽ","അറബി ഗാനം","ഗ്രൂപ്പ് song","കഥ കഥനം","ആക്ഷൻ song","കഥയെഴുത്ത്","പദ നിർമ്മാണം","Quiz","Quran പാരായണം"]
+};
+const UP_ITEMS={
+Arabic:["ഗദ്യവായന","ഖുർആൻ പാരായണം","പദ്യം ചൊല്ലൽ","കഥാരചന","പ്രശ്നോത്തരി","അറബിഗാനം","പ്രസംഗം","Monoact","വിവർത്തനം","പദപ്പുഴ","സംഘഗാനം","സംഭാഷണം","പടക്കേളി"],
+Sanskrit:["ഉപന്യാസ രചന","കഥാരചന","കവിതാരചന","സമസ്യാപൂരണം","പ്രശ്നോത്തരി","പദ്യം ചൊല്ലൽ ആൺ","പദ്യം ചൊല്ലൽ പെൺ","ഗാനാലാപനം ആൺ","കഥാകഥനം","ഗദ്യവായനം","സംഘഗാനം","വന്ദേമാതരം"],
+General:["പ്രസംഗം - മലയാളം","പ്രസംഗം - ഇംഗ്ലീഷ്","പ്രസംഗം - ഹിന്ദി","പ്രസംഗം - തമിഴ്","പ്രസംഗം - കന്നഡ","പദ്യം ചൊല്ലൽ - മലയാളം","പദ്യം ചൊല്ലൽ - ഇംഗ്ലീഷ്","പദ്യം ചൊല്ലൽ - അറബിക്","പദ്യം ചൊല്ലൽ - ഉറുദു","പദ്യം ചൊല്ലൽ - ഹിന്ദി","പദ്യം ചൊല്ലൽ - തമിഴ്","പദ്യം ചൊല്ലൽ - കന്നഡ","ക്വിസ് - ഉറുദു","ലളിതഗാനം","മാപ്പിളപ്പാട്ട്","നാടോടി നൃത്തം","ചിത്രരചന - പെൻസിൽ","ചിത്രരചന - ജലച്ചായം","ഭരതനാട്യം","Monoact","കഥാരചന - മലയാളം","കവിതാരചന - മലയാളം","കവിതാരചന - ഹിന്ദി","കവിതാരചന - ഉറുദു","സംഘഗാനം","തിരുവാതിര","ഒപ്പന","സംഘനൃത്തം","ദേശഭക്തിഗാനം","സംഘഗാനം - ഉറുദു"]
+};
+
+const cover=document.getElementById("cover"), formCard=document.getElementById("formCard");
+const nameInput=document.getElementById("name");
+const photoInput=document.getElementById("photo");
+const classInput=document.getElementById("class");
+const divisionInput=document.getElementById("division");
+const itemInput=document.getElementById("item");
+const lpItemCategoryInput=document.getElementById("lpItemCategory");
+const placeInput=document.getElementById("place");
+const categoryEls=document.querySelectorAll('input[name="category"]');
+const itemCategoryEls=document.querySelectorAll('input[name="itemCategory"]');
+const lpNameErrorText="use capital letter only";
+
+startBtn.onclick=()=>{cover.classList.add("hidden");formCard.classList.remove("hidden")};
+backBtn.onclick=()=>{formCard.classList.add("hidden");cover.classList.remove("hidden")};
+
+function fillSelect(el,items,placeholder){
+  el.innerHTML='<option value="">'+placeholder+'</option>';
+  items.forEach(x=>{let o=document.createElement("option");o.value=x;o.textContent=x;el.appendChild(o)});
+}
+function setupCategory(cat){
+  classWrap.classList.remove("hidden");divisionWrap.classList.remove("hidden");itemWrap.classList.remove("hidden");
+  const isLP=cat==="LP";
+  document.getElementById("lpCategoryWrap").classList.toggle("hidden",!isLP);
+  upCategoryWrap.classList.toggle("hidden",isLP);
+  fillSelect(document.getElementById("class"),isLP?["1","2","3","4"]:["5","6","7"],"Select Class");
+  fillSelect(document.getElementById("division"),isLP?["A","B","C","D","E","F"]:["A","B","C","D","E","F","G","H","I","J","K","L","M"],"Select Division");
+  item.innerHTML='<option value="">Select Item</option>';
+  lpItemCategoryInput.value="";
+  itemCategoryEls.forEach(r=>r.checked=false);
+}
+categoryEls.forEach(r=>r.onchange=()=>setupCategory(r.value));
+lpItemCategoryInput.onchange=()=>fillSelect(item,LP_ITEMS[lpItemCategoryInput.value]||[],"Select Item");
+itemCategoryEls.forEach(r=>r.onchange=()=>fillSelect(item,UP_ITEMS[r.value]||[],"Select Item"));
+
+function validateStudentName(){
+  const value=nameInput.value.trim();
+  if(!/^[A-Z][A-Z .'-]*$/.test(value)){
+    nameInput.setCustomValidity(lpNameErrorText);
+    msg.textContent=lpNameErrorText;
+    return false;
+  }
+  nameInput.setCustomValidity("");
+  if(msg.textContent===lpNameErrorText) msg.textContent="";
+  return true;
+}
+nameInput.addEventListener("input",validateStudentName);
+nameInput.addEventListener("blur",validateStudentName);
+
+f.onsubmit=async e=>{
+ e.preventDefault();
+ if(!validateStudentName()) return;
+ msg.textContent="Submitting...";
+ try{
+   const cat=document.querySelector('input[name="category"]:checked')?.value;
+   const icat=cat==="LP" ? (lpItemCategoryInput.value||null) : (document.querySelector('input[name="itemCategory"]:checked')?.value||null);
+   if(!cat) throw new Error("Please select LP or UP.");
+   if(!icat) throw new Error("Please select Item Category.");
+   if(!classInput.value || !divisionInput.value || !itemInput.value || !placeInput.value)
+     throw new Error("Please complete all required fields.");
+   const file=photoInput.files[0];
+   if(!file) throw new Error("Please select a student photo.");
+   const ext=(file.name.split(".").pop()||"jpg").toLowerCase();
+   const path=crypto.randomUUID()+"."+ext;
+   const u=await sb.storage.from("student-photos").upload(path,file);
+   if(u.error) throw u.error;
+   const r=await sb.from("students").insert({
+     student_name:nameInput.value.trim(),
+     category:cat,
+     class:classInput.value,
+     division:divisionInput.value,
+     item_category:icat,
+     item:itemInput.value,
+     place:placeInput.value,
+     photo_path:path
+   });
+   if(r.error) throw r.error;
+   msg.textContent="Registration submitted successfully.";
+   f.reset(); lpCategoryWrap.classList.add("hidden"); upCategoryWrap.classList.add("hidden"); classWrap.classList.add("hidden"); divisionWrap.classList.add("hidden"); itemWrap.classList.add("hidden");
+ }catch(x){msg.textContent="Error: "+x.message}
+};
+</script>
+<button id="installAppBtn" style="display:none;position:fixed;right:16px;bottom:16px;z-index:9999;width:auto;padding:12px 16px;border:0;border-radius:12px;background:#1e4f91;color:#fff;font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,.2);cursor:pointer">📱 Install App</button>
+<script>
+(function(){
+  if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+  let deferredPrompt;
+  const btn=document.getElementById("installAppBtn");
+  window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;if(btn)btn.style.display="block";});
+  if(btn) btn.addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;btn.style.display="none";});
+  window.addEventListener("appinstalled",()=>{if(btn)btn.style.display="none";});
+})();
+</script>
+</body></html>

@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1e4f91">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Certificate Manager - AUPS Vadakkumpuram</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:Inter,Segoe UI,Arial,sans-serif;background:#f4f6fb;padding:18px;color:#182033;margin:0}
+.card{background:#fff;padding:20px;border-radius:16px;margin:0 auto 18px;max-width:1280px;box-shadow:0 5px 20px rgba(0,0,0,.07)}
+h2,h3{margin-top:0}.muted{color:#667085;font-size:13px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.toolbar input{flex:1;min-width:180px}
+button{background:#182033;color:#fff;border:0;border-radius:8px;padding:10px 14px;cursor:pointer}
+button.primary{background:#1e4f91}.danger{background:#b42318}
+input,textarea,select{padding:10px;border:1px solid #ccd3df;border-radius:8px}
+table{width:100%;border-collapse:collapse;min-width:850px}
+th,td{padding:9px;border-bottom:1px solid #e4e7ec;text-align:left}
+.thumb{width:45px;height:55px;object-fit:cover;border-radius:5px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.grid label{font-size:12px;font-weight:700;color:#475467}
+.grid input{width:100%;margin-top:4px}
+.design-grid{display:grid;grid-template-columns:minmax(320px,1.1fr) minmax(280px,.9fr);gap:20px}
+.preview-wrap{background:#eef2f7;padding:12px;border-radius:12px;overflow:auto}
+.preview{position:relative;width:100%;max-width:760px;aspect-ratio:1024/683;margin:auto;background:#fff center/100% 100% no-repeat;box-shadow:0 4px 14px rgba(0,0,0,.12);overflow:hidden}
+.overlay{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;text-align:center;color:#111;font-family:Georgia,serif;font-weight:700}
+#pname{font-size:30px}.small{font-size:16px;font-family:Arial,sans-serif;font-weight:600}
+.posgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.photo-frame{position:absolute;transform:translate(-50%,-50%);overflow:hidden;display:none;pointer-events:auto;touch-action:none;z-index:5}.photo-frame img{width:100%;height:100%;display:block;object-fit:cover;object-position:center;pointer-events:none}.photo-overlay{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.photo-control{border:1px solid #e4e7ec;border-radius:10px;padding:10px;margin-top:10px}
+.photo-control h4{margin:0 0 8px}
+.photo-preview-note{font-size:12px;color:#667085;margin-top:6px}
+.photo-frame{cursor:move}
+.posbox{border:1px solid #e4e7ec;border-radius:10px;padding:10px}
+.posbox h4{margin:0 0 8px}
+.posbox input{width:100%}
+.fileline{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.status{font-weight:700;margin-top:8px}
+.pagination{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-top:12px}
+.pagination .page-buttons{display:flex;gap:5px;flex-wrap:wrap}
+.pagination button{padding:7px 11px}
+.pagination button.active{background:#1e4f91}
+.locked-note{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:10px;border-radius:10px}
+#designArea{display:none}
+.login-card{max-width:1280px}
+.login-row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.login-row label{font-size:12px;font-weight:700}
+.login-row input{display:block;margin-top:4px}
+#designLoginMsg{font-weight:700;margin-top:8px}
+@media(max-width:900px){.design-grid{grid-template-columns:1fr}.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.grid,.posgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="app" style="display:block">
+<div class="card">
+<div class="toolbar">
+<a href="index.html" style="display:inline-block;text-decoration:none;background:#eef2f7;color:#1e4f91;padding:10px 14px;border-radius:8px;font-weight:700">← Registration Page</a>
+<h2 style="margin:0 0 0 8px">AUPS Vadakkumpuram - Certificate Manager</h2>
+</div>
+<div class="toolbar" style="margin-top:14px">
+<input id="search" placeholder="Search students">
+<select id="classFilter" title="Filter by class"><option value="">All Classes</option></select>
+<button id="refresh">Refresh</button>
+<button id="pdf" class="primary">CERTIFICATE BULK DOWNLOAD (PDF)</button>
+</div>
+<div style="overflow:auto;margin-top:12px"><table><thead><tr>
+<th><input id="all" type="checkbox"></th><th>Photo</th><th>Name</th><th>Category</th><th>Class & Division</th><th>Item</th><th>Place</th><th>Actions</th>
+</tr></thead><tbody id="rows"></tbody></table></div>
+<div class="pagination">
+  <div class="muted" id="tableInfo">Showing 0 of 0</div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <label class="muted">Rows per page <select id="pageSize"><option value="5" selected>5</option><option value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option><option value="200">200</option></select></label>
+    <div class="page-buttons" id="pageButtons"></div>
+  </div>
+</div>
+</div>
+
+<div class="card login-card">
+<h3>🔐 Certificate Design Access</h3>
+<p class="muted">Certificate design and layout settings are locked. Enter the permanent design username and password to edit them.</p>
+<div class="login-row">
+  <label>Username<input id="designUsername" autocomplete="username" placeholder="Username"></label>
+  <label>Password<input id="designPassword" type="password" autocomplete="current-password" placeholder="Password"></label>
+  <button id="designLoginBtn" class="primary">Login to Edit Design</button>
+  <button id="designLogoutBtn" style="display:none">Lock Design</button>
+</div>
+<div id="designLoginMsg"></div>
+</div>
+
+<div id="designArea">
+<div class="card">
+<h3>1. Upload Certificate Design</h3>
+<p class="muted">Choose your certificate image. The uploaded design becomes the background of every generated certificate.</p>
+<div class="fileline">
+<input id="designFile" type="file" accept="image/*">
+<button id="useSample">Use Existing Sample</button>
+<button id="clearDesign" class="danger">Clear Saved Design</button>
+</div>
+<p id="designStatus" class="status"></p>
+</div>
+
+<div class="card">
+<h3>2. Position the Student Data</h3>
+<p class="muted">Set the position of Student Name, Class & Division, Item and Place. Then use Preview to check a certificate before downloading. Each student can be downloaded individually or selected together for one bulk PDF.</p>
+<div class="design-grid">
+<div class="preview-wrap">
+<div id="preview" class="preview">
+<div id="pname" class="overlay" style="left:50%;top:50%">Student Name</div>
+<div id="pclass" class="overlay small" style="left:50%;top:62%">Class & Division</div>
+<div id="pitem" class="overlay small" style="left:50%;top:68%">Item</div>
+<div id="pplace" class="overlay small" style="left:50%;top:74%">Place</div>
+<div id="pphotoFrame" class="photo-frame"><img id="pphoto" class="photo-overlay" alt="Student Photo"></div>
+</div>
+</div>
+<div>
+<div class="posgrid">
+<div class="posbox"><h4>Student Name</h4><label>X %<input id="nameX" type="number" min="0" max="100" value="55"></label><label>Y %<input id="nameY" type="number" min="0" max="100" value="54.5"></label><label>Font Size<input id="nameSize" type="number" min="8" max="100" value="24"></label></div>
+<div class="posbox"><h4>Class & Division</h4><label>X %<input id="classX" type="number" min="0" max="100" value="55"></label><label>Y %<input id="classY" type="number" min="0" max="100" value="60.5"></label><label>Font Size<input id="classSize" type="number" min="8" max="60" value="15"></label></div>
+<div class="posbox"><h4>Item</h4><label>X %<input id="itemX" type="number" min="0" max="100" value="55"></label><label>Y %<input id="itemY" type="number" min="0" max="100" value="66.5"></label><label>Font Size<input id="itemSize" type="number" min="8" max="60" value="15"></label></div>
+<div class="posbox"><h4>Place</h4><label>X %<input id="placeX" type="number" min="0" max="100" value="55"></label><label>Y %<input id="placeY" type="number" min="0" max="100" value="72.5"></label><label>Font Size<input id="placeSize" type="number" min="8" max="60" value="15"></label></div>
+</div>
+<div class="photo-control">
+  <h4>Student Photo Position & Size</h4>
+  <div class="posgrid">
+    <label>X %<input id="photoX" type="number" min="0" max="100" value="87"></label>
+    <label>Y %<input id="photoY" type="number" min="0" max="100" value="35.5"></label>
+    <label>Width %<input id="photoW" type="number" min="2" max="80" value="15"></label>
+    <label>Height %<input id="photoH" type="number" min="2" max="100" value="30.5"></label>
+  </div>
+  <label style="display:block;margin-top:8px"><input id="photoRound" type="checkbox"> Round photo</label>
+  <p class="photo-preview-note">The photo is taken from the student's saved photo in Supabase. The default position is aligned to the photo frame in the supplied certificate design. You can still enter X/Y/size values or drag the photo directly in the certificate preview.</p>
+</div>
+<div class="layout-options" style="margin-top:12px;padding:12px;border:1px solid #ddd;border-radius:10px;background:#fafafa">
+  <h4 style="margin:0 0 10px">Certificate Data Font & Alignment</h4>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+    <label>Student Name Font
+      <select id="fontName"><option>Arial</option><option>Times New Roman</option><option>Georgia</option><option>Verdana</option><option>Tahoma</option><option>Courier New</option><option>Noto Sans</option><option>Noto Serif</option></select>
+    </label>
+    <label>Class Font
+      <select id="fontClass"><option>Arial</option><option>Times New Roman</option><option>Georgia</option><option>Verdana</option><option>Tahoma</option><option>Courier New</option><option>Noto Sans</option><option>Noto Serif</option></select>
+    </label>
+    <label>Item Font
+      <select id="fontItem"><option>Arial</option><option>Times New Roman</option><option>Georgia</option><option>Verdana</option><option>Tahoma</option><option>Courier New</option><option>Noto Sans</option><option>Noto Serif</option></select>
+    </label>
+    <label>Place Font
+      <select id="fontPlace"><option>Arial</option><option>Times New Roman</option><option>Georgia</option><option>Verdana</option><option>Tahoma</option><option>Courier New</option><option>Noto Sans</option><option>Noto Serif</option></select>
+    </label>
+    <label>Student Name Alignment
+      <select id="alignName"><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select>
+    </label>
+    <label>Class Alignment
+      <select id="alignClass"><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select>
+    </label>
+    <label>Item Alignment
+      <select id="alignItem"><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select>
+    </label>
+    <label>Place Alignment
+      <select id="alignPlace"><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option></select>
+    </label>
+  </div>
+</div>
+
+<button id="saveLayout" class="primary" style="width:100%;margin-top:12px">OK - Fix Certificate Design Settings</button>
+</div>
+</div>
+</div>
+</div>
+
+<div id="previewModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;padding:20px;overflow:auto">
+  <div style="background:#fff;max-width:1100px;margin:0 auto;border-radius:16px;padding:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px">
+      <h3 style="margin:0">Certificate Preview</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button id="previewDownload" class="primary">Download This Certificate</button>
+        <button id="previewClose">Close</button>
+      </div>
+    </div>
+    <div class="preview-wrap">
+      <div id="modalPreview" class="preview"></div>
+    </div>
+  </div>
+</div>
+
+<div id="cert" style="position:fixed;left:-10000px;top:0;box-sizing:border-box;text-align:center;overflow:hidden;background:#fff center/100% 100% no-repeat">
+<div id="cn" class="overlay">Student Name</div>
+<div id="cc" class="overlay small">Class & Division</div>
+<div id="ci" class="overlay small">Item</div>
+<div id="cp" class="overlay small">Place</div>
+<div id="cphotoFrame" class="photo-frame"><img id="cphoto" class="photo-overlay" alt="Student Photo"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="config.js"></script>
+<script>
+const sb=supabase.createClient(SUPABASE_CONFIG.url,SUPABASE_CONFIG.publishableKey);
+let students=[];
+let currentPage=1;
+let pageSize=5;
+let designUnlocked=false;
+const DESIGN_USERNAME="username";
+const DESIGN_PASSWORD="password";
+const DEFAULT_LAYOUT={
+ nameX:55,nameY:54.5,nameSize:24,
+ classX:55,classY:60.5,classSize:15,
+ itemX:55,itemY:66.5,itemSize:15,
+ placeX:55,placeY:72.5,placeSize:15,
+ photoX:86.6,photoY:35.2,photoW:14.2,photoH:27.6,photoRound:false,
+ nameFont:"Arial",classFont:"Arial",itemFont:"Arial",placeFont:"Arial",
+ nameAlign:"center",classAlign:"center",itemAlign:"center",placeAlign:"center"
+};
+let layout={...DEFAULT_LAYOUT};
+let designData="";
+let previewStudentData=null;
+const photoDataCache=new Map();
+const $=id=>document.getElementById(id);
+function esc(x){return String(x??"").replace(/[&<>\"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));}
+function normalizeStudent(s){
+  const cd=s.class_division||"";
+  let cls=s.class||"", div=s.division||"";
+  if(!cls && cd){ const parts=String(cd).split(/\s+-\s+/); cls=parts[0]||""; div=parts.slice(1).join(" - ")||""; }
+  return {...s,class:cls,division:div,category:s.category||s.item_category||""};
+}
+function showStatus(message,color="#245a90"){
+  let el=$("dataStatus");
+  if(!el){el=document.createElement("div");el.id="dataStatus";el.className="status";$("app").prepend(el);}
+  el.textContent=message;el.style.color=color;
+}
+function syncStyleControls(){
+  const pairs=[["fontName","nameFont"],["fontClass","classFont"],["fontItem","itemFont"],["fontPlace","placeFont"],["alignName","nameAlign"],["alignClass","classAlign"],["alignItem","itemAlign"],["alignPlace","placeAlign"]];
+  pairs.forEach(([id,key])=>{if($(id))$(id).value=layout[key]||DEFAULT_LAYOUT[key]});
+}
+function readStyleControls(){
+  const pairs=[["fontName","nameFont"],["fontClass","classFont"],["fontItem","itemFont"],["fontPlace","placeFont"],["alignName","nameAlign"],["alignClass","classAlign"],["alignItem","itemAlign"],["alignPlace","placeAlign"]];
+  pairs.forEach(([id,key])=>{if($(id))layout[key]=$(id).value});
+}
+function applyTextStyle(el,key){
+  if(!el)return;
+  el.style.fontFamily=layout[key+"Font"]||"Arial";
+  el.style.textAlign=layout[key+"Align"]||"center";
+}
+function applyPhotoLayout(frame){
+  if(!frame)return;
+  frame.style.left=(layout.photoX??86.6)+"%";
+  frame.style.top=(layout.photoY??35.2)+"%";
+  frame.style.width=(layout.photoW??14.2)+"%";
+  frame.style.height=(layout.photoH??27.6)+"%";
+  frame.style.borderRadius=layout.photoRound?"50%":"0";
+  const img=frame.querySelector("img");
+  if(img){img.style.borderRadius=layout.photoRound?"50%":"0";}
+}
+function applyLayout(){
+ const map=[["name","pname",""],["class","pclass",""],["item","pitem",""],["place","pplace",""]];
+ for(const [key,pid] of map){
+   const p=$(pid); if(p){p.style.left=layout[key+"X"]+"%";p.style.top=layout[key+"Y"]+"%";p.style.fontSize=layout[key+"Size"]+"px";applyTextStyle(p,key);}
+   const c=$("c"+(key==="name"?"n":key==="class"?"c":key==="item"?"i":"p"));
+   if(c){c.style.left=layout[key+"X"]+"%";c.style.top=layout[key+"Y"]+"%";c.style.fontSize=layout[key+"Size"]+"px";applyTextStyle(c,key);}
+ }
+ applyPhotoLayout($("pphotoFrame"));applyPhotoLayout($("cphotoFrame"));
+}
+function readLayoutInputs(){
+ ["nameX","nameY","nameSize","classX","classY","classSize","itemX","itemY","itemSize","placeX","placeY","placeSize","photoX","photoY","photoW","photoH"].forEach(k=>{if($(k))layout[k]=Number($(k).value)});
+ layout.photoRound=$("photoRound")?.checked||false;readStyleControls();
+}
+function fillLayoutInputs(){
+ ["nameX","nameY","nameSize","classX","classY","classSize","itemX","itemY","itemSize","placeX","placeY","placeSize","photoX","photoY","photoW","photoH"].forEach(k=>{if($(k))$(k).value=layout[k]});
+ if($("photoRound"))$("photoRound").checked=!!layout.photoRound;syncStyleControls();applyLayout();
+}
+function loadLayout(){
+ try{layout={...DEFAULT_LAYOUT,...JSON.parse(localStorage.getItem("kalolsavamCertificateLayoutV2")||"{}")}}catch(e){layout={...DEFAULT_LAYOUT}}
+ fillLayoutInputs();
+}
+function loadDesign(){
+ designData=localStorage.getItem("kalolsavamCertificateDesign")||"assets/certificate-sample.jpg";
+ setDesign(designData);
+ if($("designStatus"))$("designStatus").textContent=designData.startsWith("data:")?"Saved certificate design loaded.":"Existing sample certificate is active.";
+}
+function setDesign(src){
+ if($("preview"))$("preview").style.backgroundImage=`url("${src}")`;
+ if($("cert"))$("cert").style.backgroundImage=`url("${src}")`;
+}
+function setCertSize(){ $("cert").style.width="1024px";$("cert").style.height="683px"; }
+async function getStudentPhotoData(s){
+ if(!s?.photo_path)return "";
+ if(String(s.photo_path).startsWith("data:image/"))return s.photo_path;
+ if(photoDataCache.has(s.photo_path))return photoDataCache.get(s.photo_path);
+ try{
+   const r=await sb.storage.from("student-photos").createSignedUrl(s.photo_path,3600);
+   if(r.error||!r.data?.signedUrl)return "";
+   const resp=await fetch(r.data.signedUrl,{cache:"no-store"});
+   if(!resp.ok)return "";
+   const blob=await resp.blob();
+   const data=await new Promise((resolve,reject)=>{const fr=new FileReader();fr.onload=()=>resolve(fr.result);fr.onerror=reject;fr.readAsDataURL(blob)});
+   photoDataCache.set(s.photo_path,data);return data;
+ }catch(e){console.warn(e);return ""}
+}
+async function setStudentPhoto(s,frameId){
+ const frame=$(frameId);if(!frame)return;
+ const img=frame.querySelector("img");
+ const data=await getStudentPhotoData(s);
+ if(data){img.src=data;frame.style.display="block";}else{img.removeAttribute("src");frame.style.display="none";}
+ applyPhotoLayout(frame);
+}
+function enablePhotoDrag(frame,container){
+ if(!frame||!container)return;
+ frame.onpointerdown=ev=>{
+   ev.preventDefault();frame.setPointerCapture?.(ev.pointerId);
+   const move=e=>{
+     const r=container.getBoundingClientRect();
+     const x=Math.max(layout.photoW/2,Math.min(100-layout.photoW/2,((e.clientX-r.left)/r.width)*100));
+     const y=Math.max(layout.photoH/2,Math.min(100-layout.photoH/2,((e.clientY-r.top)/r.height)*100));
+     layout.photoX=x;layout.photoY=y;applyPhotoLayout(frame);applyPhotoLayout($("pphotoFrame"));applyPhotoLayout($("cphotoFrame"));
+     if($("photoX"))$("photoX").value=x.toFixed(1);if($("photoY"))$("photoY").value=y.toFixed(1);
+   };
+   const up=()=>{frame.removeEventListener("pointermove",move);frame.removeEventListener("pointerup",up);localStorage.setItem("kalolsavamCertificateLayoutV2",JSON.stringify(layout));};
+   frame.addEventListener("pointermove",move);frame.addEventListener("pointerup",up,{once:true});
+ };
+}
+function populateText(s,prefix=""){
+ const cd=(s.class||"")+(s.division?" - "+s.division:"");
+ if(prefix){$(prefix+"name").textContent=s.student_name||"";$(prefix+"class").textContent=cd;$(prefix+"item").textContent=s.item||"";$(prefix+"place").textContent=s.place||"";}
+}
+async function populateCert(s){
+ $("cn").textContent=s.student_name||"";$("cc").textContent=(s.class||"")+(s.division?" - "+s.division:"");$("ci").textContent=s.item||"";$("cp").textContent=s.place||"";
+ setCertSize();applyLayout();await setStudentPhoto(s,"cphotoFrame");
+}
+async function populatePreviewModal(s){
+ const mp=$("modalPreview");
+ mp.innerHTML=`<div id="mpname" class="overlay"></div><div id="mpclass" class="overlay small"></div><div id="mpitem" class="overlay small"></div><div id="mpplace" class="overlay small"></div><div id="mpphotoFrame" class="photo-frame"><img id="mpphoto" alt="Student Photo"></div>`;
+ mp.style.backgroundImage=`url("${designData}")`;
+ const cd=(s.class||"")+(s.division?" - "+s.division:"");
+ $("mpname").textContent=s.student_name||"";$("mpclass").textContent=cd;$("mpitem").textContent=s.item||"";$("mpplace").textContent=s.place||"";
+ [["name","mpname"],["class","mpclass"],["item","mpitem"],["place","mpplace"]].forEach(([k,id])=>{const el=$(id);el.style.left=layout[k+"X"]+"%";el.style.top=layout[k+"Y"]+"%";el.style.fontSize=layout[k+"Size"]+"px";applyTextStyle(el,k)});
+ applyPhotoLayout($("mpphotoFrame"));await setStudentPhoto(s,"mpphotoFrame");enablePhotoDrag($("mpphotoFrame"),mp);
+}
+async function previewStudent(id){const s=students.find(x=>x.id===id);if(!s)return;if(!designData)return alert("Please upload a certificate design first.");previewStudentData=s;await populatePreviewModal(s);$("previewModal").style.display="block";}
+async function thumbUrl(s){return await getStudentPhotoData(s)}
+function getFilteredStudents(){
+ const q=($("search").value||"").toLowerCase().trim();
+ const cls=$('classFilter')?.value||"";
+ return students.filter(s=>{
+   const text=[s.student_name,s.item,s.class,s.division,s.place,s.category].join(" ").toLowerCase();
+   return (!q||text.includes(q)) && (!cls||String(s.class||"")===String(cls));
+ });
+}
+function updateClassFilter(){
+ const sel=$("classFilter"); if(!sel)return;
+ const current=sel.value;
+ const dataClasses=[...new Set(students.map(s=>String(s.class||"").trim()).filter(Boolean))]; const classes=[...new Set(["1","2","3","4","5","6","7",...dataClasses])];
+ classes.sort((a,b)=>{const na=Number(a),nb=Number(b);return Number.isFinite(na)&&Number.isFinite(nb)?na-nb:a.localeCompare(b,undefined,{numeric:true});});
+ sel.innerHTML='<option value="">All Classes</option>'+classes.map(c=>`<option value="${esc(c)}">Class ${esc(c)}</option>`).join("");
+ if(classes.includes(current))sel.value=current;
+}
+function renderPagination(total){
+ const pages=Math.max(1,Math.ceil(total/pageSize));
+ if(currentPage>pages)currentPage=pages;
+ const start=total?((currentPage-1)*pageSize+1):0;
+ const end=Math.min(total,currentPage*pageSize);
+ $("tableInfo").textContent=`Showing ${start}-${end} of ${total}`;
+ const box=$("pageButtons");
+ let html='';
+ html+=`<button ${currentPage<=1?'disabled':''} data-page="${currentPage-1}">‹</button>`;
+ const maxButtons=7;
+ let pStart=Math.max(1,currentPage-3),pEnd=Math.min(pages,pStart+maxButtons-1);pStart=Math.max(1,pEnd-maxButtons+1);
+ for(let p=pStart;p<=pEnd;p++)html+=`<button class="${p===currentPage?'active':''}" data-page="${p}">${p}</button>`;
+ html+=`<button ${currentPage>=pages?'disabled':''} data-page="${currentPage+1}">›</button>`;
+ box.innerHTML=html;
+ box.querySelectorAll('button[data-page]').forEach(b=>b.onclick=()=>{const p=Number(b.dataset.page);if(p>=1&&p<=pages){currentPage=p;renderRows();}});
+}
+function renderRows(){
+ const list=getFilteredStudents();
+ const pages=Math.max(1,Math.ceil(list.length/pageSize));
+ if(currentPage>pages)currentPage=pages;
+ const visible=list.slice((currentPage-1)*pageSize,currentPage*pageSize);
+ $("rows").innerHTML=visible.map((s,i)=>`<tr data-id="${esc(s.id)}"><td><input class="pick" type="checkbox" data-id="${esc(s.id)}"></td><td><span class="thumbbox" data-photo="${esc(s.id)}"></span></td><td>${esc(s.student_name)}</td><td>${esc(s.category||"-")}</td><td>${esc((s.class||"")+(s.division?" - "+s.division:""))}</td><td>${esc(s.item)}</td><td>${esc(s.place)}</td><td><button class="primary previewBtn" data-id="${esc(s.id)}">Preview</button> <button class="editBtn" data-id="${esc(s.id)}">Edit</button> <button class="danger deleteBtn" data-id="${esc(s.id)}">Delete</button></td></tr>`).join("");
+ visible.forEach(async s=>{const box=document.querySelector(`.thumbbox[data-photo="${CSS.escape(s.id)}"]`);if(!box)return;const data=await thumbUrl(s);box.innerHTML=data?`<img class="thumb" src="${data}" alt="Photo">`:"—"});
+ document.querySelectorAll(".previewBtn").forEach(b=>b.onclick=()=>previewStudent(b.dataset.id));
+ document.querySelectorAll(".deleteBtn").forEach(b=>b.onclick=()=>deleteStudent(b.dataset.id));
+ document.querySelectorAll(".editBtn").forEach(b=>b.onclick=()=>editStudent(b.dataset.id));
+ renderPagination(list.length);
+}
+
+async function load(){
+ showStatus("Loading student data…");
+ const r=await sb.from("students").select("*").order("created_at",{ascending:false});
+ if(r.error){students=[];renderRows();showStatus("Unable to load table: "+r.error.message,"#b42318");return;}
+ students=(r.data||[]).map(normalizeStudent);updateClassFilter();currentPage=1;renderRows();showStatus(`${students.length} student record(s) loaded.`,"#118047");
+}
+async function deleteStudent(id){
+ const s=students.find(x=>x.id===id);if(!s)return;if(!confirm(`Delete ${s.student_name||"this student"}?`))return;
+ const r=await sb.from("students").delete().eq("id",id);if(r.error)return alert("Delete failed: "+r.error.message);
+ if(s.photo_path&&!String(s.photo_path).startsWith("data:"))await sb.storage.from("student-photos").remove([s.photo_path]);
+ await load();
+}
+async function editStudent(id){
+ const s=students.find(x=>x.id===id);if(!s)return;
+ const name=prompt("Student Name (CAPITAL LETTERS ONLY)",s.student_name||"");if(name===null)return;
+ if(!/^[A-Z][A-Z .'-]*$/.test(name.trim()))return alert("use capital letter only");
+ const item=prompt("Item",s.item||"");if(item===null)return;
+ const place=prompt("Place (First / Second / Third)",s.place||"");if(place===null)return;
+ if(!["First","Second","Third"].includes(place))return alert("Place must be First, Second or Third.");
+ const r=await sb.from("students").update({student_name:name.trim(),item,place}).eq("id",id);if(r.error)return alert("Update failed: "+r.error.message);await load();
+}
+async function waitForCertificateImages(el){
+  const imgs=[...el.querySelectorAll("img")];
+  await Promise.all(imgs.map(img=>{
+    if(!img.src)return Promise.resolve();
+    if(img.complete&&img.naturalWidth>0)return Promise.resolve();
+    return new Promise(resolve=>{img.addEventListener("load",resolve,{once:true});img.addEventListener("error",resolve,{once:true});setTimeout(resolve,3000);});
+  }));
+  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+}
+async function loadCanvasImage(src){
+  return await new Promise((resolve,reject)=>{
+    const img=new Image();
+    if(/^https?:/i.test(String(src||""))) img.crossOrigin="anonymous";
+    img.onload=()=>resolve(img);
+    img.onerror=()=>reject(new Error("Unable to load certificate image/photo"));
+    img.src=src;
+  });
+}
+function roundRectPath(ctx,x,y,w,h,r){
+  r=Math.max(0,Math.min(r,Math.min(w,h)/2));
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
+function drawObjectCover(ctx,img,x,y,w,h){
+  const iw=img.naturalWidth||img.width, ih=img.naturalHeight||img.height;
+  if(!iw||!ih)return;
+  const scale=Math.max(w/iw,h/ih), dw=iw*scale, dh=ih*scale;
+  ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);
+}
+function canvasFont(key){
+  const family=layout[key+"Font"]||"Arial";
+  const size=layout[key+"Size"]||15;
+  const weight=key==="name"?"700":"600";
+  return `${weight} ${size}px "${family}", Arial, sans-serif`;
+}
+function drawCanvasText(ctx,text,key){
+  const x=(layout[key+"X"]??50)/100*1024;
+  const y=(layout[key+"Y"]??50)/100*683;
+  ctx.font=canvasFont(key);
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  // The browser preview uses left:X%, top:Y%, transform:translate(-50%,-50%).
+  // Therefore the visual text center is always exactly at X/Y regardless of text-align.
+  ctx.fillStyle="#111";
+  ctx.fillText(String(text??""),x,y);
+}
+async function renderCertificateCanvas(s){
+  // FINAL PDF RENDERER: draw directly onto a fixed 1024x683 canvas.
+  // This uses the exact same percentage coordinates as the preview and does
+  // NOT use html2canvas or an off-screen DOM. This prevents photo movement,
+  // blank pages, viewport scaling and transform rounding differences.
+  await populatePreviewModal(s);
+  const bg=await loadCanvasImage(designData);
+  const photoData=await getStudentPhotoData(s);
+  const photo=photoData?await loadCanvasImage(photoData):null;
+  if(document.fonts?.ready) await document.fonts.ready;
+
+  const canvas=document.createElement("canvas");
+  canvas.width=4096; canvas.height=2732;
+  const ctx=canvas.getContext("2d",{alpha:false});
+  const sx=4;
+  ctx.fillStyle="#fff";ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.save();ctx.scale(sx,sx);
+  // Certificate background is always stretched exactly like .preview/.modalPreview.
+  ctx.drawImage(bg,0,0,1024,683);
+
+  const cd=(s.class||"")+(s.division?" - "+s.division:"");
+  drawCanvasText(ctx,s.student_name||"","name");
+  drawCanvasText(ctx,cd,"class");
+  drawCanvasText(ctx,s.item||"","item");
+  drawCanvasText(ctx,s.place||"","place");
+
+  if(photo){
+    const x=(layout.photoX??86.6)/100*1024;
+    const y=(layout.photoY??35.2)/100*683;
+    const w=(layout.photoW??14.2)/100*1024;
+    const h=(layout.photoH??27.6)/100*683;
+    ctx.save();
+    if(layout.photoRound){
+      roundRectPath(ctx,x-w/2,y-h/2,w,h,Math.min(w,h)/2);ctx.clip();
+    }else{
+      ctx.beginPath();ctx.rect(x-w/2,y-h/2,w,h);ctx.clip();
+    }
+    drawObjectCover(ctx,photo,x-w/2,y-h/2,w,h);
+    ctx.restore();
+  }
+  ctx.restore();
+  return canvas;
+}
+
+function makePrintPdf(){
+  const PDF=window.jspdf.jsPDF;
+  // A4 landscape for direct printing, while preserving the exact 1024:683 certificate ratio.
+  // The certificate is uniformly scaled to fit the A4 page; it is never stretched.
+  return new PDF({orientation:"landscape",unit:"pt",format:"a4",compress:true});
+}
+function addCertificatePage(pdf,canvas){
+  const pageW=841.89,pageH=595.28;
+  const certRatio=1024/683;
+  const w=pageW;
+  const h=w/certRatio;
+  const y=(pageH-h)/2;
+  pdf.addImage(canvas.toDataURL("image/jpeg",.98),"JPEG",0,y,w,h,undefined,"FAST");
+}
+async function downloadIndividual(id){const s=students.find(x=>x.id===id);if(!s)return;if(!designData)return alert("Please upload a certificate design first.");try{const c=await renderCertificateCanvas(s);const p=makePrintPdf();addCertificatePage(p,c);p.save((s.student_name||"certificate").replace(/[\/:*?"<>|]+/g,"_")+".pdf");await sb.from("students").update({certificate_status:"Generated"}).eq("id",s.id);await load();}catch(e){alert("Certificate Error: "+e.message)}}
+$("previewDownload").onclick=async()=>{if(previewStudentData)await downloadIndividual(previewStudentData.id)};
+$("previewClose").onclick=()=>$("previewModal").style.display="none";
+$("previewModal").onclick=e=>{if(e.target===$("previewModal"))$("previewModal").style.display="none"};
+$("pdf").onclick=async()=>{const ids=[...document.querySelectorAll(".pick:checked")].map(x=>x.dataset.id);const list=students.filter(s=>ids.includes(s.id));if(!list.length)return alert("Select students first.");if(!designData)return alert("Please upload a certificate design first.");const btn=$("pdf");btn.disabled=true;btn.textContent="Generating print-quality PDF…";try{const p=makePrintPdf();for(let i=0;i<list.length;i++){const c=await renderCertificateCanvas(list[i]);if(i)p.addPage("a4","landscape");addCertificatePage(p,c);await sb.from("students").update({certificate_status:"Generated"}).eq("id",list[i].id)}p.save("school-kalolsavam-certificates.pdf");await load();alert(`${list.length} certificate(s) downloaded as one print-quality PDF. Preview alignment is preserved.`)}catch(e){alert("PDF Error: "+e.message)}finally{btn.disabled=false;btn.textContent="CERTIFICATE BULK DOWNLOAD (PDF)"}};
+$("refresh").onclick=load;
+$("search").addEventListener("input",()=>{currentPage=1;renderRows()});
+$("classFilter").addEventListener("change",()=>{currentPage=1;renderRows()});
+$("pageSize").addEventListener("change",e=>{pageSize=Number(e.target.value)||5;currentPage=1;renderRows()});
+$("all").addEventListener("change",e=>document.querySelectorAll(".pick").forEach(x=>x.checked=e.target.checked));
+function setDesignAccess(unlocked){
+ designUnlocked=unlocked;
+ $("designArea").style.display=unlocked?"block":"none";
+ $("designLogoutBtn").style.display=unlocked?"inline-block":"none";
+ $("designLoginBtn").style.display=unlocked?"none":"inline-block";
+ $("designUsername").disabled=unlocked;$("designPassword").disabled=unlocked;
+ if(!unlocked){$("designUsername").value="";$("designPassword").value="";$("designLoginMsg").textContent="Certificate design is locked.";$("designLoginMsg").style.color="#9a3412";}
+ else {$("designLoginMsg").textContent="Design editing unlocked.";$("designLoginMsg").style.color="#118047";}
+}
+$("designLoginBtn").onclick=()=>{
+ const u=$("designUsername").value.trim(),p=$("designPassword").value;
+ if(u===DESIGN_USERNAME&&p===DESIGN_PASSWORD){setDesignAccess(true);}else{$("designLoginMsg").textContent="Invalid username or password.";$('designLoginMsg').style.color="#b42318";}
+};
+$("designLogoutBtn").onclick=()=>setDesignAccess(false);
+$("designPassword").addEventListener("keydown",e=>{if(e.key==="Enter")$("designLoginBtn").click()});
+$("designFile").onchange=e=>{if(!designUnlocked)return;const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{designData=r.result;setDesign(designData);$("designStatus").textContent="New certificate design selected. Click OK to fix/save it."};r.readAsDataURL(f)};
+$("useSample").onclick=()=>{if(!designUnlocked)return;designData="assets/certificate-sample.jpg";setDesign(designData);$("designStatus").textContent="Existing sample selected. Click OK to fix/save it."};
+$("clearDesign").onclick=()=>{if(!designUnlocked)return;localStorage.removeItem("kalolsavamCertificateDesign");designData="assets/certificate-sample.jpg";setDesign(designData);$("designStatus").textContent="Sample design restored. Click OK to fix/save it."};
+$("saveLayout").onclick=()=>{if(!designUnlocked)return;readLayoutInputs();localStorage.setItem("kalolsavamCertificateLayoutV2",JSON.stringify(layout));localStorage.setItem("kalolsavamCertificateDesign",designData);setDesign(designData);$("designStatus").textContent="Certificate design and all position/font settings are fixed and saved. Click Lock Design when finished.";};
+["fontName","fontClass","fontItem","fontPlace","alignName","alignClass","alignItem","alignPlace"].forEach(id=>$(id)?.addEventListener("change",()=>{readStyleControls();applyLayout()}));
+["nameX","nameY","nameSize","classX","classY","classSize","itemX","itemY","itemSize","placeX","placeY","placeSize","photoX","photoY","photoW","photoH"].forEach(id=>$(id)?.addEventListener("input",()=>{readLayoutInputs();applyLayout()}));
+$("photoRound")?.addEventListener("change",()=>{layout.photoRound=$("photoRound").checked;applyLayout()});
+loadLayout();loadDesign();applyLayout();setDesignAccess(false);
+// Show the existing sample certificate and its photo frame immediately; the actual student photo appears when a record is previewed/downloaded.
+$("pphotoFrame").style.display="none";
+load();
+</script>
+<script>
+(function(){
+  if("serviceWorker" in navigator) window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+  let deferredPrompt;
+  const btn=document.getElementById("installAppBtn");
+  window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;if(btn)btn.style.display="block";});
+  if(btn) btn.addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;btn.style.display="none";});
+  window.addEventListener("appinstalled",()=>{if(btn)btn.style.display="none";});
+})();
+</script>
+</body></html>

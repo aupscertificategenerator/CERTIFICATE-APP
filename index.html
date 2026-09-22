@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0b4b91">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>AUPS Vadakkumpuram - Certificate Data Collection Form</title>
+<style>
+*{box-sizing:border-box}
+:root{--navy:#0b3f7a;--blue:#0b5aa6;--sky:#dff3ff;--line:#b9d6ee;--text:#12345a;--muted:#71839a}
+body{margin:0;min-height:100vh;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);background:linear-gradient(180deg,#dff5ff 0,#f7fbff 22%,#e7f7ff 100%);overflow-x:hidden}
+body:before,body:after{content:"";position:fixed;z-index:-1;pointer-events:none;border-radius:50%;filter:blur(1px)}
+body:before{width:520px;height:220px;left:-190px;top:-70px;background:#b9e7ff;transform:rotate(-12deg)}
+body:after{width:560px;height:240px;right:-220px;bottom:-70px;background:#c8edff;transform:rotate(12deg)}
+.page{max-width:1180px;margin:0 auto;padding:26px 22px 44px}
+.hero{position:relative;text-align:center;padding:12px 10px 18px}
+.brand-row{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap}
+.logo{width:82px;height:82px;border-radius:50%;object-fit:cover;background:#fff;border:5px solid #fff;box-shadow:0 5px 18px rgba(17,74,125,.16)}
+.school{font-size:clamp(28px,4.2vw,48px);font-weight:900;letter-spacing:.4px;color:#0a3d79;margin:0}
+.tagline{font-size:15px;font-weight:700;color:#54708f;margin:5px 0 0}
+.ribbon{display:inline-block;margin:18px auto 8px;padding:15px 34px;border-radius:38px;background:linear-gradient(90deg,#0a3f7b,#126bb5);color:#fff;font-size:clamp(24px,3.8vw,42px);font-weight:900;letter-spacing:.3px;box-shadow:0 8px 22px rgba(15,83,143,.18)}
+.subhead{font-size:18px;font-weight:700;color:#315d85;margin:10px 0 0}
+.shell{background:rgba(255,255,255,.94);border:2px solid #bfe4fa;border-radius:24px;box-shadow:0 12px 36px rgba(25,78,120,.11);padding:28px;margin-top:18px;position:relative;overflow:hidden}
+.shell:before{content:"";position:absolute;left:-100px;bottom:-130px;width:300px;height:260px;background:#d9f4ff;border-radius:50%}
+.shell:after{content:"";position:absolute;right:-100px;top:-120px;width:280px;height:250px;background:#e5f8ff;border-radius:50%}
+.form-grid{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:24px 34px}
+.field{min-width:0}.field.full{grid-column:1/-1}
+.field label,.section-label{display:block;font-weight:850;font-size:17px;color:#123f72;margin-bottom:8px}
+.req{color:#e21d2d}
+input[type=text],input[type=file],select{width:100%;height:54px;border:1.5px solid #b9d0e5;border-radius:12px;background:#fff;padding:0 16px;font-size:16px;color:#1f5ba2;outline:none;transition:.18s;box-shadow:0 1px 2px rgba(0,0,0,.02)}
+input[type=text]:focus,select:focus,input[type=file]:focus{border-color:#3e8fcb;box-shadow:0 0 0 4px rgba(62,143,203,.12)}
+input[type=file]{padding:9px 12px;color:#71839a}
+input::placeholder{color:#91a5bc}
+.help{font-size:13px;color:#71839a;margin-top:7px}.error{color:#d51f2e;font-weight:700;min-height:18px;margin-top:5px}
+.radio-row{display:flex;gap:12px;flex-wrap:wrap}.radio-card{position:relative;display:flex;align-items:center;gap:8px;padding:13px 18px;border:1.5px solid #b9d0e5;border-radius:12px;background:#fff;cursor:pointer;font-weight:750;color:#245a90}.radio-card input{accent-color:#0b5aa6}.radio-card:has(input:checked){border-color:#0b66b0;background:#edf7ff;box-shadow:0 0 0 3px rgba(11,90,166,.08)}
+.hidden{display:none!important}.notice{grid-column:1/-1;padding:13px 16px;border-radius:12px;background:#eff9ff;border:1px solid #cbeafa;color:#476a87;font-size:13px;font-weight:650}
+.actions{grid-column:1/-1;display:flex;justify-content:center;margin-top:2px}.submit-btn{width:min(540px,100%);height:58px;border:0;border-radius:12px;background:linear-gradient(90deg,#1d8fd1,#1680c1);color:#fff;font-size:19px;font-weight:850;cursor:pointer;box-shadow:0 8px 18px rgba(20,119,181,.2);transition:.18s}.submit-btn:hover{transform:translateY(-1px);filter:brightness(.98)}
+.back-link{display:block;text-align:center;margin-top:14px;color:#0b4f92;text-decoration:none;font-weight:750}.back-link:hover{text-decoration:underline}
+.msg{grid-column:1/-1;text-align:center;font-weight:800;font-size:15px;min-height:22px;margin-top:-8px}
+.footer{text-align:center;color:#7890a8;font-size:12px;margin-top:18px}
+.install{position:fixed;right:16px;bottom:16px;z-index:9999;width:auto;padding:12px 16px;border:0;border-radius:12px;background:#0b4f92;color:#fff;font-weight:800;box-shadow:0 8px 22px rgba(0,0,0,.2);cursor:pointer}
+.teacher-link{position:absolute;right:10px;top:10px;color:#0b4f92;text-decoration:none;font-size:13px;font-weight:800;background:#fff;padding:8px 12px;border-radius:10px;border:1px solid #c8e2f3}
+@media(max-width:760px){.page{padding:14px 12px 32px}.teacher-link{position:static;display:inline-block;margin-bottom:10px}.form-grid{grid-template-columns:1fr;gap:18px}.field.full,.notice,.actions,.msg{grid-column:auto}.shell{padding:20px 15px;border-radius:18px}.brand-row{gap:10px}.logo{width:66px;height:66px}.ribbon{padding:12px 20px;font-size:25px}.subhead{font-size:15px}.field label{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hero">
+    <a class="teacher-link" href="admin.html">TEACHER / CERTIFICATE MANAGER →</a>
+    <div class="brand-row">
+      <img class="logo" src="icons/icon-192.png" alt="School logo">
+      <div>
+        <h1 class="school">AUPS Vadakkumpuram</h1>
+        <p class="tagline">School Kalolsavam • Certificate Management</p>
+      </div>
+    </div>
+    <div class="ribbon">CERTIFICATE DATA COLLECTION FORM</div>
+    <p class="subhead">Please enter the student details correctly for certificate generation</p>
+  </div>
+
+  <div class="shell">
+    <form id="f" class="form-grid">
+      <div class="field">
+        <label for="name">👤 Student Name <span class="req">*</span></label>
+        <input id="name" type="text" autocomplete="off" placeholder="ENTER STUDENT NAME (CAPITAL LETTERS ONLY)" required>
+        <div id="nameHelp" class="help">Use CAPITAL LETTERS only.</div>
+        <div id="nameError" class="error"></div>
+      </div>
+
+      <div class="field">
+        <label>🏅 Section <span class="req">*</span></label>
+        <div class="radio-row">
+          <label class="radio-card"><input type="radio" name="category" value="LP"> LP</label>
+          <label class="radio-card"><input type="radio" name="category" value="UP"> UP</label>
+        </div>
+      </div>
+
+      <div id="classWrap" class="field hidden">
+        <label for="class">🎓 Class <span class="req">*</span></label>
+        <select id="class"><option value="">Select Class</option></select>
+      </div>
+
+      <div id="divisionWrap" class="field hidden">
+        <label for="division">▣ Division <span class="req">*</span></label>
+        <select id="division"><option value="">Select Division</option></select>
+      </div>
+
+      <div id="lpCategoryWrap" class="field hidden">
+        <label for="lpItemCategory">📚 Item Category <span class="req">*</span></label>
+        <select id="lpItemCategory">
+          <option value="">Select Item Category</option>
+          <option value="General">General</option>
+          <option value="Arabic">Arabic</option>
+        </select>
+      </div>
+
+      <div id="upCategoryWrap" class="field hidden">
+        <label>📚 Item Category <span class="req">*</span></label>
+        <div class="radio-row">
+          <label class="radio-card"><input type="radio" name="itemCategory" value="Arabic"> Arabic</label>
+          <label class="radio-card"><input type="radio" name="itemCategory" value="Sanskrit"> Sanskrit</label>
+          <label class="radio-card"><input type="radio" name="itemCategory" value="General"> General</label>
+        </div>
+      </div>
+
+      <div id="itemWrap" class="field hidden">
+        <label for="item">🎭 Item <span class="req">*</span></label>
+        <select id="item"><option value="">Select Item</option></select>
+      </div>
+
+      <div class="field">
+        <label for="place">🏆 Place <span class="req">*</span></label>
+        <select id="place" required>
+          <option value="">Select Place</option>
+          <option>First</option>
+          <option>Second</option>
+          <option>Third</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="photo">🖼️ Student Photo <span class="req">*</span></label>
+        <input id="photo" type="file" accept="image/jpeg,image/png,image/webp" required>
+        <div class="help">Upload a clear recent JPG / PNG / WEBP photo. The same photo will be used on the certificate.</div>
+      </div>
+
+      <div class="notice">After submission, the student's data and photo are saved to the certificate register. The teacher can preview, edit/delete records and generate individual or bulk certificates from the Teacher / Certificate Manager.</div>
+
+      <div id="msg" class="msg"></div>
+      <div class="actions"><button class="submit-btn" type="submit">➤ &nbsp; SUBMIT STUDENT DETAILS</button></div>
+      <a class="back-link" href="admin.html">Open Teacher / Certificate Manager →</a>
+    </form>
+  </div>
+
+  <div class="footer">AUPS Vadakkumpuram • School Kalolsavam Certificate Portal</div>
+</div>
+
+<button id="installAppBtn" class="install" style="display:none">📱 Install App</button>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script>
+const sb=supabase.createClient(SUPABASE_CONFIG.url,SUPABASE_CONFIG.publishableKey);
+const LP_ITEMS={
+General:["പെൻസിൽ ഡ്രോയിങ്","ജലച്ചായം","കടങ്കഥ","പ്രസംഗം മലയാളം","തമിഴ് പ്രസംഗം","കന്നഡ പ്രസംഗം","മോണോആക്ട്","കഥാകഥനം","അറബിക് പദ്യം ചൊല്ലൽ (ജനറൽ)","ഇംഗ്ലീഷ് പദ്യം","ലളിതഗാനം","പദ്യം ചൊല്ലൽ കന്നട","പദ്യം ചൊല്ലൽ മലയാളം","ആംഗ്യപ്പാട്ട് ഇംഗ്ലീഷ്","ആംഗ്യപ്പാട്ട് മലയാളം","പദ്യം ചൊല്ലൽ തമിഴ്","നാടോടി നൃത്തം","മാപ്പിളപ്പാട്ട്","സംഘഗാനം","ദേശഭക്തിഗാനം","സംഘനൃത്തം"],
+Arabic:["പദ്യം ചൊല്ലൽ","അറബി ഗാനം","ഗ്രൂപ്പ് song","കഥ കഥനം","ആക്ഷൻ song","കഥയെഴുത്ത്","പദ നിർമ്മാണം","Quiz","Quran പാരായണം"]
+};
+const UP_ITEMS={
+Arabic:["ഗദ്യവായന","ഖുർആൻ പാരായണം","പദ്യം ചൊല്ലൽ","കഥാരചന","പ്രശ്നോത്തരി","അറബിഗാനം","പ്രസംഗം","Monoact","വിവർത്തനം","പദപ്പുഴ","സംഘഗാനം","സംഭാഷണം","പടക്കേളി"],
+Sanskrit:["ഉപന്യാസ രചന","കഥാരചന","കവിതാരചന","സമസ്യാപൂരണം","പ്രശ്നോത്തരി","പദ്യം ചൊല്ലൽ ആൺ","പദ്യം ചൊല്ലൽ പെൺ","ഗാനാലാപനം ആൺ","കഥാകഥനം","ഗദ്യവായനം","സംഘഗാനം","വന്ദേമാതരം"],
+General:["പ്രസംഗം - മലയാളം","പ്രസംഗം - ഇംഗ്ലീഷ്","പ്രസംഗം - ഹിന്ദി","പ്രസംഗം - തമിഴ്","പ്രസംഗം - കന്നഡ","പദ്യം ചൊല്ലൽ - മലയാളം","പദ്യം ചൊല്ലൽ - ഇംഗ്ലീഷ്","പദ്യം ചൊല്ലൽ - അറബിക്","പദ്യം ചൊല്ലൽ - ഉറുദു","പദ്യം ചൊല്ലൽ - ഹിന്ദി","പദ്യം ചൊല്ലൽ - തമിഴ്","പദ്യം ചൊല്ലൽ - കന്നഡ","ക്വിസ് - ഉറുദു","ലളിതഗാനം","മാപ്പിളപ്പാട്ട്","നാടോടി നൃത്തം","ചിത്രരചന - പെൻസിൽ","ചിത്രരചന - ജലച്ചായം","ഭരതനാട്യം","Monoact","കഥാരചന - മലയാളം","കവിതാരചന - മലയാളം","കവിതാരചന - ഹിന്ദി","കവിതാരചന - ഉറുദു","സംഘഗാനം","തിരുവാതിര","ഒപ്പന","സംഘനൃത്തം","ദേശഭക്തിഗാനം","സംഘഗാനം - ഉറുദു"]
+};
+const $=id=>document.getElementById(id);
+const nameInput=$("name"),photoInput=$("photo"),classInput=$("class"),divisionInput=$("division"),itemInput=$("item"),lpItemCategoryInput=$("lpItemCategory"),placeInput=$("place"),msg=$("msg"),form=$("f");
+const categoryEls=document.querySelectorAll('input[name="category"]');
+const itemCategoryEls=document.querySelectorAll('input[name="itemCategory"]');
+function fillSelect(el,items,placeholder){el.innerHTML='<option value="">'+placeholder+'</option>';items.forEach(x=>{const o=document.createElement("option");o.value=x;o.textContent=x;el.appendChild(o)})}
+function setupCategory(cat){
+  $("classWrap").classList.remove("hidden");$("divisionWrap").classList.remove("hidden");$("itemWrap").classList.remove("hidden");
+  const isLP=cat==="LP";
+  $("lpCategoryWrap").classList.toggle("hidden",!isLP);$("upCategoryWrap").classList.toggle("hidden",isLP);
+  fillSelect(classInput,isLP?["1","2","3","4"]:["5","6","7"],"Select Class");
+  fillSelect(divisionInput,isLP?["A","B","C","D","E","F"]:["A","B","C","D","E","F","G","H","I","J","K","L","M"],"Select Division");
+  fillSelect(itemInput,[],"Select Item");lpItemCategoryInput.value="";itemCategoryEls.forEach(r=>r.checked=false);
+}
+categoryEls.forEach(r=>r.addEventListener("change",()=>setupCategory(r.value)));
+lpItemCategoryInput.addEventListener("change",()=>fillSelect(itemInput,LP_ITEMS[lpItemCategoryInput.value]||[],"Select Item"));
+itemCategoryEls.forEach(r=>r.addEventListener("change",()=>fillSelect(itemInput,UP_ITEMS[r.value]||[],"Select Item")));
+async function compressImage(file,maxW,maxH,quality){
+  const src=await new Promise((resolve,reject)=>{const fr=new FileReader();fr.onload=()=>resolve(fr.result);fr.onerror=reject;fr.readAsDataURL(file)});
+  const img=await new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=reject;i.src=src});
+  const scale=Math.min(1,maxW/img.naturalWidth,maxH/img.naturalHeight);
+  const c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.naturalWidth*scale));c.height=Math.max(1,Math.round(img.naturalHeight*scale));
+  const ctx=c.getContext("2d");ctx.drawImage(img,0,0,c.width,c.height);
+  return c.toDataURL("image/jpeg",quality);
+}
+
+function validateStudentName(){
+  const value=nameInput.value.trim();
+  const ok=/^[A-Z][A-Z .'-]*$/.test(value);
+  if(!ok){nameInput.setCustomValidity("use capital letter only");$("nameError").textContent="use capital letter only";return false}
+  nameInput.setCustomValidity("");$("nameError").textContent="";return true;
+}
+nameInput.addEventListener("input",validateStudentName);nameInput.addEventListener("blur",validateStudentName);
+form.addEventListener("submit",async e=>{
+  e.preventDefault();if(!validateStudentName())return;
+  msg.textContent="Submitting...";msg.style.color="#245a90";
+  try{
+    const cat=document.querySelector('input[name="category"]:checked')?.value;
+    const icat=cat==="LP"?(lpItemCategoryInput.value||null):(document.querySelector('input[name="itemCategory"]:checked')?.value||null);
+    if(!cat)throw new Error("Please select LP or UP.");
+    if(!icat)throw new Error("Please select Item Category.");
+    if(!classInput.value||!divisionInput.value||!itemInput.value||!placeInput.value)throw new Error("Please complete all required fields.");
+    const file=photoInput.files[0];if(!file)throw new Error("Please select a student photo.");
+    // Resize/compress the photo before saving so the app works reliably on phones.
+    const photoData=await compressImage(file,900,900,0.82);
+    let photoPath="";
+    const ext=(file.name.split(".").pop()||"jpg").toLowerCase();
+    const path=crypto.randomUUID()+"."+ext;
+    const upload=await sb.storage.from("student-photos").upload(path,file,{upsert:false,contentType:file.type||"image/jpeg"});
+    if(!upload.error){
+      photoPath=path;
+    }else{
+      // Fallback: keep the compressed photo directly in the existing photo_path text field.
+      photoPath=photoData;
+    }
+
+    const baseRecord={student_name:nameInput.value.trim(),item:itemInput.value,place:placeInput.value,photo_path:photoPath};
+    // Support both the newer column layout and the original students table created earlier.
+    let insert=await sb.from("students").insert({...baseRecord,category:cat,class:classInput.value,division:divisionInput.value,item_category:icat});
+    if(insert.error && /column .* does not exist|schema cache|Could not find the .* column/i.test(insert.error.message||"")){
+      const legacy={...baseRecord,class_division:classInput.value+(divisionInput.value?" - "+divisionInput.value:"")};
+      insert=await sb.from("students").insert(legacy);
+    }
+    if(insert.error){
+      if(!photoPath.startsWith("data:")) await sb.storage.from("student-photos").remove([photoPath]);
+      throw insert.error;
+    }
+    msg.textContent="Student details submitted successfully.";msg.style.color="#118047";
+    form.reset();$("classWrap").classList.add("hidden");$("divisionWrap").classList.add("hidden");$("lpCategoryWrap").classList.add("hidden");$("upCategoryWrap").classList.add("hidden");$("itemWrap").classList.add("hidden");$("nameError").textContent="";
+  }catch(err){msg.textContent="Error: "+(err.message||err);msg.style.color="#d51f2e"}
+});
+(function(){
+  if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+  let deferredPrompt;const btn=$("installAppBtn");
+  window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;btn.style.display="block"});
+  btn.addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;btn.style.display="none"});
+  window.addEventListener("appinstalled",()=>btn.style.display="none");
+})();
+</script>
+</body>
+</html>
