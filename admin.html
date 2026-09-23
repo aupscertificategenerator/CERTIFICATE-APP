@@ -92,10 +92,10 @@ th,td{padding:9px;border-bottom:1px solid #e4e7ec;text-align:left}
 
 <div id="designArea">
 <div class="card">
-<h3>1. 🔐 Admin Only — Upload Certificate Design</h3>
-<p class="muted">Only the design administrator can upload/change the certificate background. After clicking <b>OK - Fix Certificate Design Settings</b>, the same design is used on every device.</p>
+<h3>1. Upload Certificate Design</h3>
+<p class="muted">Choose your certificate image. The uploaded design becomes the background of every generated certificate.</p>
 <div class="fileline">
-<input id="designFile" type="file" accept="image/jpeg,image/png">
+<input id="designFile" type="file" accept="image/*">
 <button id="useSample">Use Existing Sample</button>
 <button id="clearDesign" class="danger">Clear Saved Design</button>
 </div>
@@ -270,28 +270,8 @@ function fillLayoutInputs(){
  ["nameX","nameY","nameSize","classX","classY","classSize","itemX","itemY","itemSize","placeX","placeY","placeSize","photoX","photoY","photoW","photoH"].forEach(k=>{if($(k))$(k).value=layout[k]});
  if($("photoRound"))$("photoRound").checked=!!layout.photoRound;syncStyleControls();applyLayout();
 }
-async function loadLayout(){
- try{
-  const {data,error}=await sb.from("certificate_settings").select("layout").eq("id",1).maybeSingle();
-  if(error) throw error;
-  layout={...DEFAULT_LAYOUT,...(data?.layout||{})};
- }catch(e){console.warn("Layout load error:",e);layout={...DEFAULT_LAYOUT};}
- fillLayoutInputs();
-}
-async function loadDesign(){
- try{
-  const {data,error}=await sb.from("certificate_settings").select("design_data").eq("id",1).maybeSingle();
-  if(error) throw error;
-  designData=data?.design_data||"assets/certificate-sample.jpg";
-  setDesign(designData);
-  if($("designStatus")) $("designStatus").textContent=data?.design_data?"Saved certificate design loaded from Supabase.":"Existing sample certificate is active.";
- }catch(e){
-  console.warn("Design load error:",e);
-  designData="assets/certificate-sample.jpg";
-  setDesign(designData);
-  if($("designStatus")) $("designStatus").textContent="Certificate design loaded.";
- }
-}
+async function loadLayout(){try{const {data,error}=await sb.from("certificate_settings").select("layout").eq("id",1).maybeSingle();if(error)throw error;layout={...DEFAULT_LAYOUT,...(data?.layout||{})};fillLayoutInputs()}catch(e){console.error("Layout load error:",e);layout={...DEFAULT_LAYOUT};fillLayoutInputs()}}
+async function loadDesign(){try{const {data,error}=await sb.from("certificate_settings").select("design_data").eq("id",1).maybeSingle();if(error)throw error;const saved=data?.design_data||"";if(saved){if(String(saved).startsWith("certificate-background.")){const sg=await sb.storage.from("certificate-design").createSignedUrl(saved,31536000);if(sg.error||!sg.data?.signedUrl)throw(sg.error||new Error("Could not load saved certificate design"));designData=sg.data.signedUrl}else designData=saved;setDesign(designData);$("designStatus").textContent="Saved certificate design loaded from Supabase."}else{designData="assets/certificate-sample.jpg";setDesign(designData);$("designStatus").textContent="Existing sample certificate is active."}}catch(e){console.error("Design load error:",e);designData="assets/certificate-sample.jpg";setDesign(designData);$("designStatus").textContent="Certificate design loaded."}}
 function setDesign(src){
  if($("preview"))$("preview").style.backgroundImage=`url("${src}")`;
  if($("cert"))$("cert").style.backgroundImage=`url("${src}")`;
@@ -559,51 +539,11 @@ $("designLoginBtn").onclick=()=>{
 };
 $("designLogoutBtn").onclick=()=>setDesignAccess(false);
 $("designPassword").addEventListener("keydown",e=>{if(e.key==="Enter")$("designLoginBtn").click()});
-$("designFile").onchange=e=>{
- if(!designUnlocked)return;
- const f=e.target.files[0];
- if(!f)return;
- if(!["image/jpeg","image/png"].includes(f.type)){alert("Please select a JPG or PNG certificate design.");e.target.value="";return;}
- const r=new FileReader();
- r.onload=()=>{designData=r.result;setDesign(designData);$("designStatus").textContent="New certificate design selected. Click OK to upload and fix it for all devices."};
- r.readAsDataURL(f);
-};
+$("designFile").onchange=e=>{if(!designUnlocked)return;const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{designData=r.result;setDesign(designData);$("designStatus").textContent="New certificate design selected. Click OK to upload and fix/save it."};r.readAsDataURL(f)};
 $("useSample").onclick=()=>{if(!designUnlocked)return;designData="assets/certificate-sample.jpg";setDesign(designData);$("designStatus").textContent="Existing sample selected. Click OK to fix/save it."};
-$("clearDesign").onclick=()=>{if(!designUnlocked)return;designData="assets/certificate-sample.jpg";setDesign(designData);$("designStatus").textContent="Sample design selected. Click OK to fix/save it."};
-async function uploadCertificateDesignIfNeeded(){
- if(!designData||!designData.startsWith("data:image/"))return designData||"assets/certificate-sample.jpg";
- const match=designData.match(/^data:(image\/(?:jpeg|png));base64,(.+)$/);
- if(!match)throw new Error("Invalid certificate image. Please select a JPG or PNG file.");
- const mime=match[1],ext=mime.includes("png")?"png":"jpg";
- const binary=atob(match[2]),bytes=new Uint8Array(binary.length);
- for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
- const blob=new Blob([bytes],{type:mime});
- const path=`current-certificate.${ext}`;
- const {error:uploadError}=await sb.storage.from("certificate-design").upload(path,blob,{upsert:true,contentType:mime,cacheControl:"3600"});
- if(uploadError)throw uploadError;
- const {data:urlData}=sb.storage.from("certificate-design").getPublicUrl(path);
- if(!urlData?.publicUrl)throw new Error("Could not create certificate design URL.");
- return urlData.publicUrl+"?v="+Date.now();
-}
-$("saveLayout").onclick=async()=>{
- if(!designUnlocked)return;
- readLayoutInputs();
- const btn=$("saveLayout");btn.disabled=true;btn.textContent="Uploading & Saving...";
- try{
-  designData=await uploadCertificateDesignIfNeeded();
-  const {error}=await sb.from("certificate_settings").upsert({id:1,design_data:designData,layout:layout,updated_at:new Date().toISOString()},{onConflict:"id"});
-  if(error)throw error;
-  setDesign(designData);
-  $("designStatus").textContent="✓ Certificate design fixed and saved for all devices.";
-  $("designStatus").style.color="#118047";
-  alert("Certificate Design Fixed and Saved Successfully!\n\nThis design will now be used on other devices too.");
- }catch(e){
-  console.error("Design save error:",e);
-  $("designStatus").textContent="Save failed: "+e.message;
-  $("designStatus").style.color="#b42318";
-  alert("Design save failed:\n"+e.message+"\n\nPlease check the certificate-design Storage upload policy in Supabase.");
- }finally{btn.disabled=false;btn.textContent="OK - Fix Certificate Design Settings";}
-};
+$("clearDesign").onclick=()=>{if(!designUnlocked)return;designData="assets/certificate-sample.jpg";setDesign(designData);$("designStatus").textContent="Sample design selected. Click OK to save it."};
+$("saveLayout").onclick=async()=>{if(!designUnlocked)return;readLayoutInputs();const btn=$("saveLayout");btn.disabled=true;btn.textContent="Saving to Supabase...";try{let storedDesign=designData;if(String(designData).startsWith("data:image/")){const m=designData.match(/^data:([^;]+);base64,(.*)$/);if(!m)throw new Error("Invalid certificate image");const mime=m[1];const bytes=Uint8Array.from(atob(m[2]),c=>c.charCodeAt(0));const ext=(mime.split("/")[1]||"jpg").replace("jpeg","jpg");const path="certificate-background."+ext;const up=await sb.storage.from("certificate-design").upload(path,bytes,{contentType:mime,upsert:true});if(up.error)throw up.error;storedDesign=path;}const {error}=await sb.from("certificate_settings").upsert({id:1,design_data:storedDesign,layout:layout,updated_at:new Date().toISOString()},{onConflict:"id"});if(error)throw error;if(String(storedDesign).startsWith("certificate-background.")){const sg=await sb.storage.from("certificate-design").createSignedUrl(storedDesign,31536000);if(sg.error||!sg.data?.signedUrl)throw(sg.error||new Error("Could not create design URL"));designData=sg.data.signedUrl;}else designData=storedDesign;setDesign(designData);$("designStatus").textContent="✓ Certificate design and all settings permanently saved for every device.";$("designStatus").style.color="#118047";alert("Certificate Design Fixed and Saved Successfully!");}catch(e){console.error("Design save error:",e);$("designStatus").textContent="Save failed: "+e.message;$("designStatus").style.color="#b42318";alert("Design save failed:
+"+e.message);}finally{btn.disabled=false;btn.textContent="OK - Fix Certificate Design Settings";}};
 ["fontName","fontClass","fontItem","fontPlace","alignName","alignClass","alignItem","alignPlace"].forEach(id=>$(id)?.addEventListener("change",()=>{readStyleControls();applyLayout()}));
 ["nameX","nameY","nameSize","classX","classY","classSize","itemX","itemY","itemSize","placeX","placeY","placeSize","photoX","photoY","photoW","photoH"].forEach(id=>$(id)?.addEventListener("input",()=>{readLayoutInputs();applyLayout()}));
 $("photoRound")?.addEventListener("change",()=>{layout.photoRound=$("photoRound").checked;applyLayout()});
