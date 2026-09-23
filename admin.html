@@ -405,7 +405,7 @@ async function editStudent(id){
  if(!["First","Second","Third"].includes(place))return alert("Place must be First, Second or Third.");
  const r=await sb.from("students").update({student_name:name.trim(),item,place}).eq("id",id);if(r.error)return alert("Update failed: "+r.error.message);await load();
 }
-async function waitForCertificateImages(el){
+async async function waitForCertificateImages(el){
   const imgs=[...el.querySelectorAll("img")];
   await Promise.all(imgs.map(img=>{
     if(!img.src)return Promise.resolve();
