@@ -405,7 +405,7 @@ async function editStudent(id){
  if(!["First","Second","Third"].includes(place))return alert("Place must be First, Second or Third.");
  const r=await sb.from("students").update({student_name:name.trim(),item,place}).eq("id",id);if(r.error)return alert("Update failed: "+r.error.message);await load();
 }
-async async function waitForCertificateImages(el){
+async function waitForCertificateImages(el){
   const imgs=[...el.querySelectorAll("img")];
   await Promise.all(imgs.map(img=>{
     if(!img.src)return Promise.resolve();
@@ -414,97 +414,84 @@ async async function waitForCertificateImages(el){
   }));
   await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
 }
+async function loadCanvasImage(src){
+  return await new Promise((resolve,reject)=>{
+    const img=new Image();
+    if(/^https?:/i.test(String(src||""))) img.crossOrigin="anonymous";
+    img.onload=()=>resolve(img);
+    img.onerror=()=>reject(new Error("Unable to load certificate image/photo"));
+    img.src=src;
+  });
+}
+function roundRectPath(ctx,x,y,w,h,r){
+  r=Math.max(0,Math.min(r,Math.min(w,h)/2));
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
+function drawObjectCover(ctx,img,x,y,w,h){
+  const iw=img.naturalWidth||img.width, ih=img.naturalHeight||img.height;
+  if(!iw||!ih)return;
+  const scale=Math.max(w/iw,h/ih), dw=iw*scale, dh=ih*scale;
+  ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)/2,dw,dh);
+}
+function canvasFont(key){
+  const family=layout[key+"Font"]||"Arial";
+  const size=layout[key+"Size"]||15;
+  const weight=key==="name"?"700":"600";
+  return `${weight} ${size}px "${family}", Arial, sans-serif`;
+}
+function drawCanvasText(ctx,text,key){
+  const x=(layout[key+"X"]??50)/100*1024;
+  const y=(layout[key+"Y"]??50)/100*683;
+  ctx.font=canvasFont(key);
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  // The browser preview uses left:X%, top:Y%, transform:translate(-50%,-50%).
+  // Therefore the visual text center is always exactly at X/Y regardless of text-align.
+  ctx.fillStyle="#111";
+  ctx.fillText(String(text??""),x,y);
+}
 async function renderCertificateCanvas(s){
-  // IMPORTANT: render the exact same DOM used by the on-screen certificate preview.
-  // This prevents percentage/transform rounding differences between Preview and PDF.
+  // FINAL PDF RENDERER: draw directly onto a fixed 1024x683 canvas.
+  // This uses the exact same percentage coordinates as the preview and does
+  // NOT use html2canvas or an off-screen DOM. This prevents photo movement,
+  // blank pages, viewport scaling and transform rounding differences.
   await populatePreviewModal(s);
-  const cert=$("modalPreview");
-  if(!cert) throw new Error("Certificate preview renderer not found");
-  const frame=$("mpphotoFrame"), img=$("mpphoto");
-  const saved={
-    style:cert.getAttribute("style"),
-    className:cert.className,
-    parent:cert.parentElement,
-    display:cert.style.display,
-    width:cert.style.width,
-    height:cert.style.height,
-    maxWidth:cert.style.maxWidth,
-    aspectRatio:cert.style.aspectRatio,
-    position:cert.style.position,
-    left:cert.style.left,
-    top:cert.style.top,
-    margin:cert.style.margin,
-    boxShadow:cert.style.boxShadow
-  };
-  const frameSaved=frame?frame.getAttribute("style"):null;
-  const imgSaved=img?img.getAttribute("style"):null;
-  try{
-    // The preview coordinate system is exactly 1024 x 683.
-    cert.style.width="1024px";
-    cert.style.height="683px";
-    cert.style.maxWidth="none";
-    cert.style.aspectRatio="1024 / 683";
-    cert.style.position="fixed";
-    cert.style.left="-20000px";
-    cert.style.top="0px";
-    cert.style.margin="0";
-    cert.style.boxShadow="none";
-    cert.style.display="block";
-    cert.style.overflow="hidden";
-    cert.style.backgroundSize="100% 100%";
-    cert.style.boxSizing="border-box";
+  const bg=await loadCanvasImage(designData);
+  const photoData=await getStudentPhotoData(s);
+  const photo=photoData?await loadCanvasImage(photoData):null;
+  if(document.fonts?.ready) await document.fonts.ready;
 
-    // Re-apply the same percentage layout used by Preview, without converting
-    // coordinates to a second coordinate system.
-    [["name","mpname"],["class","mpclass"],["item","mpitem"],["place","mpplace"]].forEach(([key,id])=>{
-      const el=$(id); if(!el)return;
-      el.style.left=layout[key+"X"]+"%";
-      el.style.top=layout[key+"Y"]+"%";
-      el.style.fontSize=layout[key+"Size"]+"px";
-      el.style.transform="translate(-50%, -50%)";
-      el.style.whiteSpace="nowrap";
-      applyTextStyle(el,key);
-    });
-    applyPhotoLayout(frame);
-    if(frame){
-      frame.style.transform="translate(-50%, -50%)";
-      frame.style.overflow="hidden";
-      frame.style.display=img&&img.src?"block":"none";
+  const canvas=document.createElement("canvas");
+  canvas.width=4096; canvas.height=2732;
+  const ctx=canvas.getContext("2d",{alpha:false});
+  const sx=4;
+  ctx.fillStyle="#fff";ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.save();ctx.scale(sx,sx);
+  // Certificate background is always stretched exactly like .preview/.modalPreview.
+  ctx.drawImage(bg,0,0,1024,683);
+
+  const cd=(s.class||"")+(s.division?" - "+s.division:"");
+  drawCanvasText(ctx,s.student_name||"","name");
+  drawCanvasText(ctx,cd,"class");
+  drawCanvasText(ctx,s.item||"","item");
+  drawCanvasText(ctx,s.place||"","place");
+
+  if(photo){
+    const x=(layout.photoX??86.6)/100*1024;
+    const y=(layout.photoY??35.2)/100*683;
+    const w=(layout.photoW??14.2)/100*1024;
+    const h=(layout.photoH??27.6)/100*683;
+    ctx.save();
+    if(layout.photoRound){
+      roundRectPath(ctx,x-w/2,y-h/2,w,h,Math.min(w,h)/2);ctx.clip();
+    }else{
+      ctx.beginPath();ctx.rect(x-w/2,y-h/2,w,h);ctx.clip();
     }
-    if(img){
-      img.style.width="100%";
-      img.style.height="100%";
-      img.style.display="block";
-      img.style.objectFit="cover";
-      img.style.objectPosition="center center";
-    }
-
-    if(document.fonts?.ready) await document.fonts.ready;
-    await waitForCertificateImages(cert);
-    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-
-    return await html2canvas(cert,{
-      scale:4,
-      width:1024,
-      height:683,
-      windowWidth:1024,
-      windowHeight:683,
-      x:0,
-      y:0,
-      useCORS:true,
-      allowTaint:false,
-      backgroundColor:"#fff",
-      imageTimeout:15000,
-      logging:false,
-      removeContainer:true
-    });
-  }finally{
-    if(frame){if(frameSaved===null)frame.removeAttribute("style");else frame.setAttribute("style",frameSaved);}
-    if(img){if(imgSaved===null)img.removeAttribute("style");else img.setAttribute("style",imgSaved);}
-    if(saved.style===null)cert.removeAttribute("style");else cert.setAttribute("style",saved.style);
-    // Keep the modal closed after background rendering.
-    cert.style.display="none";
+    drawObjectCover(ctx,photo,x-w/2,y-h/2,w,h);
+    ctx.restore();
   }
+  ctx.restore();
+  return canvas;
 }
 
 function makePrintPdf(){
