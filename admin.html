@@ -92,19 +92,15 @@ th,td{padding:9px;border-bottom:1px solid #e4e7ec;text-align:left}
 
 <div id="designArea">
 <div class="card">
-<h3>1. Upload Certificate Design</h3>
-<p class="muted">Choose your certificate image. The uploaded design becomes the background of every generated certificate.</p>
-<div class="fileline">
-<input id="designFile" type="file" accept="image/*">
-<button id="useSample">Use Existing Sample</button>
-<button id="clearDesign" class="danger">Clear Saved Design</button>
-</div>
-<p id="designStatus" class="status"></p>
+<h3>1. Fixed Certificate Design</h3>
+<p class="muted">The supplied certificate design is already built into this app. No Browse / Upload option is required.</p>
+<div style="padding:12px;border:1px solid #d9e2ef;border-radius:10px;background:#f8fbff;font-weight:700;color:#1e4f91">✓ Certificate design fixed: School Kalolsavam 2026</div>
+<p id="designStatus" class="status">Fixed certificate design is active.</p>
 </div>
 
 <div class="card">
 <h3>2. Position the Student Data</h3>
-<p class="muted">Set the position of Student Name, Class & Division, Item and Place. Then use Preview to check a certificate before downloading. Each student can be downloaded individually or selected together for one bulk PDF.</p>
+<p class="muted">The certificate background is fixed. Set the position of Student Name, Class & Division, Item and Place and check the Preview before downloading. Each student can be downloaded individually or selected together for one bulk PDF.</p>
 <div class="design-grid">
 <div class="preview-wrap">
 <div id="preview" class="preview">
@@ -117,18 +113,18 @@ th,td{padding:9px;border-bottom:1px solid #e4e7ec;text-align:left}
 </div>
 <div>
 <div class="posgrid">
-<div class="posbox"><h4>Student Name</h4><label>X %<input id="nameX" type="number" min="0" max="100" value="55"></label><label>Y %<input id="nameY" type="number" min="0" max="100" value="54.5"></label><label>Font Size<input id="nameSize" type="number" min="8" max="100" value="24"></label></div>
-<div class="posbox"><h4>Class & Division</h4><label>X %<input id="classX" type="number" min="0" max="100" value="55"></label><label>Y %<input id="classY" type="number" min="0" max="100" value="60.5"></label><label>Font Size<input id="classSize" type="number" min="8" max="60" value="15"></label></div>
-<div class="posbox"><h4>Item</h4><label>X %<input id="itemX" type="number" min="0" max="100" value="55"></label><label>Y %<input id="itemY" type="number" min="0" max="100" value="66.5"></label><label>Font Size<input id="itemSize" type="number" min="8" max="60" value="15"></label></div>
-<div class="posbox"><h4>Place</h4><label>X %<input id="placeX" type="number" min="0" max="100" value="55"></label><label>Y %<input id="placeY" type="number" min="0" max="100" value="72.5"></label><label>Font Size<input id="placeSize" type="number" min="8" max="60" value="15"></label></div>
+<div class="posbox"><h4>Student Name</h4><label>X %<input id="nameX" type="number" min="0" max="100" value="61"></label><label>Y %<input id="nameY" type="number" min="0" max="100" value="54.2"></label><label>Font Size<input id="nameSize" type="number" min="8" max="100" value="24"></label></div>
+<div class="posbox"><h4>Class & Division</h4><label>X %<input id="classX" type="number" min="0" max="100" value="61"></label><label>Y %<input id="classY" type="number" min="0" max="100" value="59.7"></label><label>Font Size<input id="classSize" type="number" min="8" max="60" value="15"></label></div>
+<div class="posbox"><h4>Item</h4><label>X %<input id="itemX" type="number" min="0" max="100" value="61"></label><label>Y %<input id="itemY" type="number" min="0" max="100" value="65.1"></label><label>Font Size<input id="itemSize" type="number" min="8" max="60" value="15"></label></div>
+<div class="posbox"><h4>Place</h4><label>X %<input id="placeX" type="number" min="0" max="100" value="61"></label><label>Y %<input id="placeY" type="number" min="0" max="100" value="70.7"></label><label>Font Size<input id="placeSize" type="number" min="8" max="60" value="15"></label></div>
 </div>
 <div class="photo-control">
   <h4>Student Photo Position & Size</h4>
   <div class="posgrid">
-    <label>X %<input id="photoX" type="number" min="0" max="100" value="87"></label>
-    <label>Y %<input id="photoY" type="number" min="0" max="100" value="35.5"></label>
-    <label>Width %<input id="photoW" type="number" min="2" max="80" value="15"></label>
-    <label>Height %<input id="photoH" type="number" min="2" max="100" value="30.5"></label>
+    <label>X %<input id="photoX" type="number" min="0" max="100" value="84.8"></label>
+    <label>Y %<input id="photoY" type="number" min="0" max="100" value="35.0"></label>
+    <label>Width %<input id="photoW" type="number" min="2" max="80" value="16.4"></label>
+    <label>Height %<input id="photoH" type="number" min="2" max="100" value="29.8"></label>
   </div>
   <label style="display:block;margin-top:8px"><input id="photoRound" type="checkbox"> Round photo</label>
   <p class="photo-preview-note">The photo is taken from the student's saved photo in Supabase. The default position is aligned to the photo frame in the supplied certificate design. You can still enter X/Y/size values or drag the photo directly in the certificate preview.</p>
@@ -205,11 +201,11 @@ let designUnlocked=false;
 const DESIGN_USERNAME="username";
 const DESIGN_PASSWORD="password";
 const DEFAULT_LAYOUT={
- nameX:55,nameY:54.5,nameSize:24,
- classX:55,classY:60.5,classSize:15,
- itemX:55,itemY:66.5,itemSize:15,
- placeX:55,placeY:72.5,placeSize:15,
- photoX:86.6,photoY:35.2,photoW:14.2,photoH:27.6,photoRound:false,
+ nameX:61,nameY:54.2,nameSize:24,
+ classX:61,classY:59.7,classSize:15,
+ itemX:61,itemY:65.1,itemSize:15,
+ placeX:61,placeY:70.7,placeSize:15,
+ photoX:84.8,photoY:35.0,photoW:16.4,photoH:29.8,photoRound:false,
  nameFont:"Arial",classFont:"Arial",itemFont:"Arial",placeFont:"Arial",
  nameAlign:"center",classAlign:"center",itemAlign:"center",placeAlign:"center"
 };
@@ -271,17 +267,21 @@ function fillLayoutInputs(){
  if($("photoRound"))$("photoRound").checked=!!layout.photoRound;syncStyleControls();applyLayout();
 }
 function loadLayout(){
- try{layout={...DEFAULT_LAYOUT,...JSON.parse(localStorage.getItem("kalolsavamCertificateLayoutV2")||"{}")}}catch(e){layout={...DEFAULT_LAYOUT}}
+ try{layout={...DEFAULT_LAYOUT,...JSON.parse(localStorage.getItem("kalolsavamCertificateLayoutV3")||"{}")}}catch(e){layout={...DEFAULT_LAYOUT}}
  fillLayoutInputs();
 }
+const FIXED_CERTIFICATE_DESIGN="certificate_fixed.jpg";
+function fixedDesignUrl(){ return new URL(FIXED_CERTIFICATE_DESIGN, document.baseURI).href; }
 function loadDesign(){
- designData=localStorage.getItem("kalolsavamCertificateDesign")||"assets/certificate-sample.jpg";
+ designData=fixedDesignUrl();
+ localStorage.removeItem("kalolsavamCertificateDesign");
  setDesign(designData);
- if($("designStatus"))$("designStatus").textContent=designData.startsWith("data:")?"Saved certificate design loaded.":"Existing sample certificate is active.";
+ if($("designStatus"))$("designStatus").textContent="Fixed certificate design is active.";
 }
 function setDesign(src){
- if($("preview"))$("preview").style.backgroundImage=`url("${src}")`;
- if($("cert"))$("cert").style.backgroundImage=`url("${src}")`;
+ const u=new URL(src,document.baseURI).href;
+ if($("preview"))$("preview").style.backgroundImage=`url("${u}")`;
+ if($("cert"))$("cert").style.backgroundImage=`url("${u}")`;
 }
 function setCertSize(){ $("cert").style.width="1024px";$("cert").style.height="683px"; }
 async function getStudentPhotoData(s){
@@ -316,7 +316,7 @@ function enablePhotoDrag(frame,container){
      layout.photoX=x;layout.photoY=y;applyPhotoLayout(frame);applyPhotoLayout($("pphotoFrame"));applyPhotoLayout($("cphotoFrame"));
      if($("photoX"))$("photoX").value=x.toFixed(1);if($("photoY"))$("photoY").value=y.toFixed(1);
    };
-   const up=()=>{frame.removeEventListener("pointermove",move);frame.removeEventListener("pointerup",up);localStorage.setItem("kalolsavamCertificateLayoutV2",JSON.stringify(layout));};
+   const up=()=>{frame.removeEventListener("pointermove",move);frame.removeEventListener("pointerup",up);localStorage.setItem("kalolsavamCertificateLayoutV3",JSON.stringify(layout));};
    frame.addEventListener("pointermove",move);frame.addEventListener("pointerup",up,{once:true});
  };
 }
@@ -337,7 +337,7 @@ async function populatePreviewModal(s){
  [["name","mpname"],["class","mpclass"],["item","mpitem"],["place","mpplace"]].forEach(([k,id])=>{const el=$(id);el.style.left=layout[k+"X"]+"%";el.style.top=layout[k+"Y"]+"%";el.style.fontSize=layout[k+"Size"]+"px";applyTextStyle(el,k)});
  applyPhotoLayout($("mpphotoFrame"));await setStudentPhoto(s,"mpphotoFrame");enablePhotoDrag($("mpphotoFrame"),mp);
 }
-async function previewStudent(id){const s=students.find(x=>x.id===id);if(!s)return;if(!designData)return alert("Please upload a certificate design first.");previewStudentData=s;await populatePreviewModal(s);$("previewModal").style.display="block";}
+async function previewStudent(id){const s=students.find(x=>x.id===id);if(!s)return;if(!designData)return alert("The fixed certificate design is not available.");previewStudentData=s;await populatePreviewModal(s);$("previewModal").style.display="block";}
 async function thumbUrl(s){return await getStudentPhotoData(s)}
 function getFilteredStudents(){
  const q=($("search").value||"").toLowerCase().trim();
@@ -415,13 +415,23 @@ async function waitForCertificateImages(el){
   await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
 }
 async function loadCanvasImage(src){
-  return await new Promise((resolve,reject)=>{
-    const img=new Image();
-    if(/^https?:/i.test(String(src||""))) img.crossOrigin="anonymous";
-    img.onload=()=>resolve(img);
-    img.onerror=()=>reject(new Error("Unable to load certificate image/photo"));
-    img.src=src;
-  });
+  // Resolve the deployed asset URL and convert it to a data URL before drawing.
+  // This makes PDF generation reliable on GitHub Pages and on other phones.
+  const raw=String(src||"");
+  if(!raw)throw new Error("Unable to load certificate image/photo");
+  if(raw.startsWith("data:image/")){
+    return await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error("Unable to load certificate image/photo"));img.src=raw;});
+  }
+  const url=new URL(raw,document.baseURI).href;
+  try{
+    const resp=await fetch(url,{cache:"no-store",credentials:"same-origin"});
+    if(!resp.ok)throw new Error("HTTP "+resp.status);
+    const blob=await resp.blob();
+    const data=await new Promise((resolve,reject)=>{const fr=new FileReader();fr.onload=()=>resolve(fr.result);fr.onerror=reject;fr.readAsDataURL(blob);});
+    return await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error("Unable to decode certificate image/photo"));img.src=data;});
+  }catch(err){
+    return await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error("Unable to load certificate image/photo"));img.src=url;});
+  }
 }
 function roundRectPath(ctx,x,y,w,h,r){
   r=Math.max(0,Math.min(r,Math.min(w,h)/2));
@@ -508,11 +518,11 @@ function addCertificatePage(pdf,canvas){
   const y=(pageH-h)/2;
   pdf.addImage(canvas.toDataURL("image/jpeg",.98),"JPEG",0,y,w,h,undefined,"FAST");
 }
-async function downloadIndividual(id){const s=students.find(x=>x.id===id);if(!s)return;if(!designData)return alert("Please upload a certificate design first.");try{const c=await renderCertificateCanvas(s);const p=makePrintPdf();addCertificatePage(p,c);p.save((s.student_name||"certificate").replace(/[\/:*?"<>|]+/g,"_")+".pdf");await sb.from("students").update({certificate_status:"Generated"}).eq("id",s.id);await load();}catch(e){alert("Certificate Error: "+e.message)}}
+async function downloadIndividual(id){const s=students.find(x=>x.id===id);if(!s)return;if(!designData)return alert("The fixed certificate design is not available.");try{const c=await renderCertificateCanvas(s);const p=makePrintPdf();addCertificatePage(p,c);p.save((s.student_name||"certificate").replace(/[\/:*?"<>|]+/g,"_")+".pdf");await sb.from("students").update({certificate_status:"Generated"}).eq("id",s.id);await load();}catch(e){alert("Certificate Error: "+e.message)}}
 $("previewDownload").onclick=async()=>{if(previewStudentData)await downloadIndividual(previewStudentData.id)};
 $("previewClose").onclick=()=>$("previewModal").style.display="none";
 $("previewModal").onclick=e=>{if(e.target===$("previewModal"))$("previewModal").style.display="none"};
-$("pdf").onclick=async()=>{const ids=[...document.querySelectorAll(".pick:checked")].map(x=>x.dataset.id);const list=students.filter(s=>ids.includes(s.id));if(!list.length)return alert("Select students first.");if(!designData)return alert("Please upload a certificate design first.");const btn=$("pdf");btn.disabled=true;btn.textContent="Generating print-quality PDF…";try{const p=makePrintPdf();for(let i=0;i<list.length;i++){const c=await renderCertificateCanvas(list[i]);if(i)p.addPage("a4","landscape");addCertificatePage(p,c);await sb.from("students").update({certificate_status:"Generated"}).eq("id",list[i].id)}p.save("school-kalolsavam-certificates.pdf");await load();alert(`${list.length} certificate(s) downloaded as one print-quality PDF. Preview alignment is preserved.`)}catch(e){alert("PDF Error: "+e.message)}finally{btn.disabled=false;btn.textContent="CERTIFICATE BULK DOWNLOAD (PDF)"}};
+$("pdf").onclick=async()=>{const ids=[...document.querySelectorAll(".pick:checked")].map(x=>x.dataset.id);const list=students.filter(s=>ids.includes(s.id));if(!list.length)return alert("Select students first.");if(!designData)return alert("The fixed certificate design is not available.");const btn=$("pdf");btn.disabled=true;btn.textContent="Generating print-quality PDF…";try{const p=makePrintPdf();for(let i=0;i<list.length;i++){const c=await renderCertificateCanvas(list[i]);if(i)p.addPage("a4","landscape");addCertificatePage(p,c);await sb.from("students").update({certificate_status:"Generated"}).eq("id",list[i].id)}p.save("school-kalolsavam-certificates.pdf");await load();alert(`${list.length} certificate(s) downloaded as one print-quality PDF. Preview alignment is preserved.`)}catch(e){alert("PDF Error: "+e.message)}finally{btn.disabled=false;btn.textContent="CERTIFICATE BULK DOWNLOAD (PDF)"}};
 $("refresh").onclick=load;
 $("search").addEventListener("input",()=>{currentPage=1;renderRows()});
 $("classFilter").addEventListener("change",()=>{currentPage=1;renderRows()});
@@ -533,10 +543,7 @@ $("designLoginBtn").onclick=()=>{
 };
 $("designLogoutBtn").onclick=()=>setDesignAccess(false);
 $("designPassword").addEventListener("keydown",e=>{if(e.key==="Enter")$("designLoginBtn").click()});
-$("designFile").onchange=e=>{if(!designUnlocked)return;const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{designData=r.result;setDesign(designData);$("designStatus").textContent="New certificate design selected. Click OK to fix/save it."};r.readAsDataURL(f)};
-$("useSample").onclick=()=>{if(!designUnlocked)return;designData="assets/certificate-sample.jpg";setDesign(designData);$("designStatus").textContent="Existing sample selected. Click OK to fix/save it."};
-$("clearDesign").onclick=()=>{if(!designUnlocked)return;localStorage.removeItem("kalolsavamCertificateDesign");designData="assets/certificate-sample.jpg";setDesign(designData);$("designStatus").textContent="Sample design restored. Click OK to fix/save it."};
-$("saveLayout").onclick=()=>{if(!designUnlocked)return;readLayoutInputs();localStorage.setItem("kalolsavamCertificateLayoutV2",JSON.stringify(layout));localStorage.setItem("kalolsavamCertificateDesign",designData);setDesign(designData);$("designStatus").textContent="Certificate design and all position/font settings are fixed and saved. Click Lock Design when finished.";};
+$("saveLayout").onclick=()=>{if(!designUnlocked)return;readLayoutInputs();localStorage.setItem("kalolsavamCertificateLayoutV3",JSON.stringify(layout));designData=fixedDesignUrl();setDesign(designData);$("designStatus").textContent="Certificate design and all position/font settings are fixed and saved. Click Lock Design when finished.";};
 ["fontName","fontClass","fontItem","fontPlace","alignName","alignClass","alignItem","alignPlace"].forEach(id=>$(id)?.addEventListener("change",()=>{readStyleControls();applyLayout()}));
 ["nameX","nameY","nameSize","classX","classY","classSize","itemX","itemY","itemSize","placeX","placeY","placeSize","photoX","photoY","photoW","photoH"].forEach(id=>$(id)?.addEventListener("input",()=>{readLayoutInputs();applyLayout()}));
 $("photoRound")?.addEventListener("change",()=>{layout.photoRound=$("photoRound").checked;applyLayout()});
